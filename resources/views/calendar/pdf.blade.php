@@ -224,8 +224,7 @@
     <!-- Header -->
     <div class="header">
         <div class="title">ปฏิทินการปฏิบัติงานผู้บริหาร</div>
-        <div class="subtitle">สํานักงานเขตพื้นที่การศึกษาประถมศึกษา</div>
-        <div class="date-badge">{{ $selectedDate->locale('th')->translatedFormat('l') }}ที่ {{ $selectedDate->format('j') }} {{ $selectedDate->locale('th')->translatedFormat('F') }} พ.ศ. {{ $selectedDate->year + 543 }}</div>
+        <div class="date-badge">วัน{{ $selectedDate->locale('th')->translatedFormat('l') }}ที่ {{ $selectedDate->format('j') }} {{ $selectedDate->locale('th')->translatedFormat('F') }} พ.ศ. {{ $selectedDate->year + 543 }}</div>
     </div>
 
     <!-- Statistics -->
@@ -266,10 +265,10 @@
                                 $photoPath = null;
                                 if ($staff->photo) {
                                     $possiblePaths = [
+                                        public_path('uploads/staff-photos/' . $staff->photo),
+                                        public_path('uploads/staff-photos/' . basename($staff->photo)),
                                         public_path($staff->photo),
                                         public_path('uploads/' . $staff->photo),
-                                        public_path('uploads/staff-photos/' . basename($staff->photo)),
-                                        public_path(str_replace('uploads/', '', $staff->photo)),
                                     ];
                                     foreach ($possiblePaths as $testPath) {
                                         if (file_exists($testPath)) {
@@ -316,15 +315,6 @@
         <div class="no-events">ไม่มีภารกิจในวันนี้</div>
     @endif
 
-    <!-- Legend -->
-    <table class="legend-table">
-        <tr>
-            <td><span class="legend-box primary"></span> นัดหมาย</td>
-            <td><span class="legend-box success"></span> ประชุม</td>
-            <td><span class="legend-box warning"></span> ภารกิจ</td>
-            <td><span class="legend-box danger"></span> วันหยุด</td>
-        </tr>
-    </table>
 
     <!-- Footer -->
     <div class="footer">
