@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,9 +28,9 @@
             --text-dark: #1f2937;
             --text-muted: #6b7280;
         }
-        
+
         .gradient-mesh {
-            background: 
+            background:
                 radial-gradient(at 40% 20%, rgba(251, 191, 36, 0.25) 0px, transparent 50%),
                 radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.2) 0px, transparent 50%),
                 radial-gradient(at 0% 50%, rgba(251, 191, 36, 0.15) 0px, transparent 50%),
@@ -37,40 +38,47 @@
                 radial-gradient(at 0% 100%, rgba(254, 215, 170, 0.3) 0px, transparent 50%),
                 linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
         }
-        
+
         .glass-effect {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
-        
+
         .card-hover:hover {
             transform: translateY(-5px);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
         }
-        
+
         .animate-float {
             animation: float 6s ease-in-out infinite;
         }
-        
+
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
-        
+
         .text-gradient {
             background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #d97706 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
         .shine {
             position: relative;
             overflow: hidden;
         }
-        
+
         .shine::after {
             content: '';
             position: absolute;
@@ -78,65 +86,80 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(
-                to right,
-                transparent 0%,
-                rgba(255, 255, 255, 0.4) 50%,
-                transparent 100%
-            );
+            background: linear-gradient(to right,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.4) 50%,
+                    transparent 100%);
             transform: rotate(30deg);
             animation: shine 3s infinite;
         }
-        
+
         @keyframes shine {
-            0% { transform: translateX(-100%) rotate(30deg); }
-            100% { transform: translateX(100%) rotate(30deg); }
+            0% {
+                transform: translateX(-100%) rotate(30deg);
+            }
+
+            100% {
+                transform: translateX(100%) rotate(30deg);
+            }
         }
 
         /* Light Theme Text Colors */
-        .light-text-primary { color: #1f2937; }
-        .light-text-secondary { color: #4b5563; }
-        .light-text-muted { color: #6b7280; }
+        .light-text-primary {
+            color: #1f2937;
+        }
+
+        .light-text-secondary {
+            color: #4b5563;
+        }
+
+        .light-text-muted {
+            color: #6b7280;
+        }
     </style>
 </head>
+
 <body class="font-sans antialiased">
     @php
         // รับค่า filter จาก query parameters
         $selectedDate = request('date') ? \Carbon\Carbon::parse(request('date')) : now();
         $selectedStaffId = request('staff_id');
-        
+
         $thaiDate = $selectedDate->locale('th')->translatedFormat('l');
         $thaiDay = $selectedDate->day;
         $thaiMonth = $selectedDate->locale('th')->translatedFormat('F');
         $thaiYear = $selectedDate->year + 543;
-        
+
         // Query staffList พร้อมกรองตาม selectedStaffId ถ้ามี
-        $staffQuery = \App\Models\Staff::active()->ordered()->with(['calendarEvents' => function($query) use ($selectedDate) {
-            $query->forDate($selectedDate)->orderByTime();
-        }]);
-        
+        $staffQuery = \App\Models\Staff::active()->ordered()->with([
+            'calendarEvents' => function ($query) use ($selectedDate) {
+                $query->forDate($selectedDate)->orderByTime();
+            }
+        ]);
+
         if ($selectedStaffId) {
             $staffQuery->where('id', $selectedStaffId);
         }
-        
+
         $staffList = $staffQuery->get();
-        
+
         // ดึงรายชื่อ staff ทั้งหมดสำหรับ dropdown
         $allStaff = \App\Models\Staff::active()->ordered()->get();
-        
+
         $totalEvents = \App\Models\CalendarEvent::forDate($selectedDate)->count();
     @endphp
 
     <!-- Main Container with Gradient Background -->
     <div class="min-h-screen gradient-mesh">
-        
+
         <!-- Floating Header -->
         <header class="fixed top-0 left-0 right-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div class="glass-effect rounded-2xl px-6 py-3 flex items-center justify-between">
                     <!-- Logo & Title -->
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl flex items-center justify-center p-1.5 shadow-lg">
+                        <div
+                            class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl flex items-center justify-center p-1.5 shadow-lg">
                             <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-full h-full object-contain">
                         </div>
                         <div class="hidden sm:block">
@@ -147,19 +170,21 @@
 
                     <!-- Actions -->
                     <div class="flex items-center gap-3">
-                        <a href="{{ route('calendar.pdf', ['date' => $selectedDate->format('Y-m-d')]) }}" 
-                           target="_blank"
-                           class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm transition-all duration-300">
+                        <a href="{{ route('calendar.pdf', ['date' => $selectedDate->format('Y-m-d')]) }}"
+                            target="_blank"
+                            class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm transition-all duration-300">
                             <i class="fa-solid fa-file-pdf text-red-500"></i>
                             <span>พิมพ์ PDF</span>
                         </a>
                         @auth
-                            <a href="{{ route('admin.staff.index') }}" class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-900 font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-amber-500/25">
+                            <a href="{{ route('admin.staff.index') }}"
+                                class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-900 font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-amber-500/25">
                                 <i class="fa-solid fa-cog"></i>
                                 <span class="hidden sm:inline">จัดการ</span>
                             </a>
                         @else
-                            <a href="{{ route('login') }}" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm transition-all duration-300">
+                            <a href="{{ route('login') }}"
+                                class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm transition-all duration-300">
                                 <i class="fa-solid fa-right-to-bracket"></i>
                                 <span>เข้าสู่ระบบ</span>
                             </a>
@@ -173,27 +198,30 @@
         <section class="pt-32 pb-16 px-4 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto text-center">
                 <!-- Decorative Badge -->
-                <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-effect text-amber-600 mb-8 animate-float">
+                <div
+                    class="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-effect text-amber-600 mb-8 animate-float">
                     <i class="fa-solid fa-calendar-star"></i>
                     <span class="text-xl font-medium">
                         @if($selectedDate->isToday())
                             ตารางงานวันนี้
                         @else
-                            ตารางงานวันที่ {{ $selectedDate->locale('th')->translatedFormat('j F') }} {{ $selectedDate->year + 543 }}
+                            ตารางงานวันที่ {{ $selectedDate->locale('th')->translatedFormat('j F') }}
+                            {{ $selectedDate->year + 543 }}
                         @endif
                     </span>
                 </div>
-                
+
                 <!-- Big Date Display -->
                 <div class="mb-8">
-                   <p class="text-xl text-amber-600 mt-2 font-medium">วัน{{ $thaiDate }}ที่</p>
+                    <p class="text-xl text-amber-600 mt-2 font-medium">วัน{{ $thaiDate }}ที่</p>
                     <h2 class="text-8xl md:text-9xl font-bold text-gradient mb-2">{{ $thaiDay }}</h2>
                     <p class="text-3xl md:text-4xl font-light text-slate-700">{{ $thaiMonth }} {{ $thaiYear }}</p>
-                    
+
                     <!-- Real-time Clock -->
                     <div class="mt-4 inline-flex items-center gap-3 px-6 py-3 rounded-2xl glass-effect">
                         <i class="fa-regular fa-clock text-2xl text-amber-500"></i>
-                        <span id="realTimeClock" class="text-xl md:text-xl font-bold text-slate-800 tabular-nums"></span>
+                        <span id="realTimeClock"
+                            class="text-xl md:text-xl font-bold text-slate-800 tabular-nums"></span>
                         <span class="text-lg text-slate-500">น.</span>
                     </div>
                 </div>
@@ -207,28 +235,26 @@
                                 <label class="text-slate-600 text-sm font-medium mb-2 block text-left">
                                     <i class="fa-regular fa-calendar mr-2"></i>เลือกวันที่
                                 </label>
-                                <input 
-                                    type="date" 
-                                    name="date" 
-                                    id="filterDate"
+                                <input type="date" name="date" id="filterDate"
                                     value="{{ $selectedDate->format('Y-m-d') }}"
                                     class="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all duration-300"
-                                    onchange="document.getElementById('filterForm').submit()"
-                                >
+                                    onchange="document.getElementById('filterForm').submit()">
                             </div>
-                            
+
                             <!-- Person Filter -->
                             <div class="w-full md:flex-1">
                                 <label class="text-slate-600 text-sm font-medium mb-2 block text-left">
                                     <i class="fa-regular fa-user mr-2"></i>เลือกบุคคล
                                 </label>
-                                <select 
-                                    name="staff_id" 
-                                    id="filterStaff"
+                                <select name="staff_id" id="filterStaff"
                                     class="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all duration-300 appearance-none cursor-pointer"
-                                    style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%23475569\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"%3e%3cpolyline points=\"6 9 12 15 18 9\"%3e%3c/polyline%3e%3c/svg%3e'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem;"
-                                    onchange="document.getElementById('filterForm').submit()"
-                                >
+                                    style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\"
+                                    http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\"
+                                    stroke=\"%23475569\" stroke-width=\"2\" stroke-linecap=\"round\"
+                                    stroke-linejoin=\"round\"%3e%3cpolyline points=\"6 9 12 15 18
+                                    9\"%3e%3c/polyline%3e%3c/svg%3e'); background-repeat: no-repeat;
+                                    background-position: right 1rem center; background-size: 1rem;"
+                                    onchange="document.getElementById('filterForm').submit()">
                                     <option value="">ทั้งหมด</option>
                                     @foreach($allStaff as $person)
                                         <option value="{{ $person->id }}" {{ $selectedStaffId == $person->id ? 'selected' : '' }}>
@@ -237,26 +263,26 @@
                                     @endforeach
                                 </select>
                             </div>
-                            
+
                             <!-- Action Buttons -->
                             <div class="flex gap-3 mt-4 md:mt-6">
-                                <a href="{{ route('home') }}" 
-                                   class="px-5 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium transition-all duration-300 flex items-center gap-2 shadow-md"
-                                   title="ดูวันนี้">
+                                <a href="{{ route('home') }}"
+                                    class="px-5 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium transition-all duration-300 flex items-center gap-2 shadow-md"
+                                    title="ดูวันนี้">
                                     <i class="fa-solid fa-calendar-day"></i>
                                     <span class="hidden sm:inline">วันนี้</span>
                                 </a>
                                 @if(request('date') || request('staff_id'))
-                                    <a href="{{ route('home') }}" 
-                                       class="px-5 py-3 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium transition-all duration-300 flex items-center gap-2"
-                                       title="ล้างตัวกรอง">
+                                    <a href="{{ route('home') }}"
+                                        class="px-5 py-3 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium transition-all duration-300 flex items-center gap-2"
+                                        title="ล้างตัวกรอง">
                                         <i class="fa-solid fa-xmark"></i>
                                         <span class="hidden sm:inline">ล้าง</span>
                                     </a>
                                 @endif
                             </div>
                         </div>
-                        
+
                         <!-- Active Filters Display -->
                         @if($selectedStaffId)
                             <div class="mt-4 pt-4 border-t border-slate-200">
@@ -264,10 +290,12 @@
                                     <span class="text-slate-500 text-sm">กำลังดู:</span>
                                     @php $filterStaff = $allStaff->firstWhere('id', $selectedStaffId); @endphp
                                     @if($filterStaff)
-                                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-100 text-amber-700 text-sm">
+                                        <span
+                                            class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-100 text-amber-700 text-sm">
                                             <i class="fa-solid fa-user"></i>
                                             {{ $filterStaff->name }}
-                                            <a href="{{ route('home', ['date' => $selectedDate->format('Y-m-d')]) }}" class="hover:text-amber-900 transition-colors">
+                                            <a href="{{ route('home', ['date' => $selectedDate->format('Y-m-d')]) }}"
+                                                class="hover:text-amber-900 transition-colors">
                                                 <i class="fa-solid fa-times"></i>
                                             </a>
                                         </span>
@@ -292,13 +320,156 @@
             </div>
         </section>
 
+        <!-- Quick View ผู้บริหาร (Avatar Bar) -->
+        <section class="pb-8 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="glass-effect rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-amber-500"></i>
+                            ผู้บริหารทั้งหมด
+                        </h3>
+                        <span class="text-sm text-slate-500">คลิกเพื่อดูตารางงาน</span>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                        @foreach($allStaff as $person)
+                            <a href="{{ route('home', ['date' => $selectedDate->format('Y-m-d'), 'staff_id' => $person->id]) }}" 
+                               class="group flex flex-col items-center p-3 rounded-2xl transition-all duration-300 hover:bg-amber-50 {{ $selectedStaffId == $person->id ? 'bg-amber-100 ring-2 ring-amber-500' : '' }}">
+                                <!-- Avatar -->
+                                <div class="relative mb-2">
+                                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden ring-3 ring-slate-200 group-hover:ring-amber-400 transition-all duration-300 shadow-lg {{ $selectedStaffId == $person->id ? 'ring-amber-500' : '' }}">
+                                        @if($person->photo)
+                                            <img src="{{ $person->photo_url }}" alt="{{ $person->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                        @else
+                                            <div class="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+                                                <i class="fa-solid fa-user text-2xl text-slate-400"></i>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <!-- Event count badge -->
+                                    @php
+                                        $eventCount = $person->calendarEvents()->forDate($selectedDate)->count();
+                                    @endphp
+                                    <div class="absolute -bottom-1 -right-1 w-7 h-7 {{ $eventCount > 0 ? 'bg-gradient-to-br from-amber-500 to-amber-600' : 'bg-slate-400' }} rounded-lg flex items-center justify-center shadow-md ring-2 ring-white">
+                                        <span class="text-white text-xs font-bold">{{ $eventCount }}</span>
+                                    </div>
+                                </div>
+                                <!-- Name -->
+                                <p class="text-sm font-medium text-slate-700 group-hover:text-amber-600 transition-colors text-center max-w-[80px] truncate {{ $selectedStaffId == $person->id ? 'text-amber-600' : '' }}">
+                                    {{ Str::before($person->name, ' ') }}
+                                </p>
+                                <p class="text-xs text-slate-400 text-center max-w-[90px] truncate">{{ Str::limit($person->position, 15) }}</p>
+                            </a>
+                        @endforeach
+                        
+                        <!-- ปุ่มดูทั้งหมด -->
+                        @if($selectedStaffId)
+                            <a href="{{ route('home', ['date' => $selectedDate->format('Y-m-d')]) }}" 
+                               class="flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 hover:bg-blue-50 border-2 border-dashed border-blue-300 hover:border-blue-500 min-w-[80px]">
+                                <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-blue-100 flex items-center justify-center">
+                                    <i class="fa-solid fa-users text-2xl text-blue-500"></i>
+                                </div>
+                                <p class="text-sm font-medium text-blue-600 mt-2">ดูทั้งหมด</p>
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Announcements Slider -->
+        <section class="pb-8 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 shadow-xl">
+                    <!-- Decorative Elements -->
+                    <div class="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+                    <div class="absolute bottom-0 right-0 w-60 h-60 bg-white/10 rounded-full translate-x-1/3 translate-y-1/3"></div>
+                    <div class="absolute top-1/2 left-1/4 w-20 h-20 bg-white/5 rounded-full"></div>
+                    
+                    <div class="relative p-6 md:p-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-bullhorn animate-pulse"></i>
+                                ประกาศและข่าวสาร
+                            </h3>
+                            <div class="flex items-center gap-2">
+                                <button onclick="prevAnnouncement()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all">
+                                    <i class="fa-solid fa-chevron-left text-sm"></i>
+                                </button>
+                                <button onclick="nextAnnouncement()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all">
+                                    <i class="fa-solid fa-chevron-right text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Slider Container -->
+                        <div id="announcementSlider" class="relative min-h-[120px]">
+                            @php
+                                $announcements = [
+                                    [
+                                        'icon' => 'fa-calendar-check',
+                                        'title' => 'ยินดีต้อนรับสู่ระบบปฏิทินการปฏิบัติงาน',
+                                        'description' => 'ระบบนี้จะช่วยให้ท่านติดตามตารางการปฏิบัติงานของผู้บริหารได้อย่างง่ายดาย สามารถเลือกดูตามวันที่หรือเลือกดูเฉพาะบุคคลได้',
+                                        'color' => 'bg-amber-400'
+                                    ],
+                                    [
+                                        'icon' => 'fa-file-pdf',
+                                        'title' => 'พิมพ์รายงาน PDF ได้แล้ววันนี้',
+                                        'description' => 'สามารถพิมพ์รายงานปฏิทินการปฏิบัติงานเป็น PDF ได้ โดยคลิกที่ปุ่ม "พิมพ์ PDF" ด้านบนขวา',
+                                        'color' => 'bg-red-400'
+                                    ],
+                                    [
+                                        'icon' => 'fa-clock',
+                                        'title' => 'อัปเดตตารางงานแบบเรียลไทม์',
+                                        'description' => 'ตารางการปฏิบัติงานจะถูกอัปเดตโดยอัตโนมัติเมื่อมีการเปลี่ยนแปลง ท่านสามารถตรวจสอบได้ตลอดเวลา',
+                                        'color' => 'bg-green-400'
+                                    ],
+                                    [
+                                        'icon' => 'fa-bell',
+                                        'title' => 'กิจกรรมประจำสัปดาห์',
+                                        'description' => 'อย่าลืมตรวจสอบตารางกิจกรรมประจำสัปดาห์ เพื่อเตรียมความพร้อมสำหรับการประชุมและภารกิจต่างๆ',
+                                        'color' => 'bg-blue-400'
+                                    ]
+                                ];
+                            @endphp
+                            
+                            @foreach($announcements as $index => $announcement)
+                                <div class="announcement-slide absolute inset-0 transition-all duration-500 {{ $index === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full' }}" data-index="{{ $index }}">
+                                    <div class="flex items-start gap-4">
+                                        <div class="flex-shrink-0 w-14 h-14 {{ $announcement['color'] }} rounded-2xl flex items-center justify-center shadow-lg">
+                                            <i class="fa-solid {{ $announcement['icon'] }} text-2xl text-white"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="text-xl font-bold text-white mb-2">{{ $announcement['title'] }}</h4>
+                                            <p class="text-white/80 leading-relaxed">{{ $announcement['description'] }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        
+                        <!-- Dots Indicator -->
+                        <div class="flex items-center justify-center gap-2 mt-6">
+                            @foreach($announcements as $index => $announcement)
+                                <button onclick="goToAnnouncement({{ $index }})" 
+                                        class="announcement-dot w-2 h-2 rounded-full transition-all duration-300 {{ $index === 0 ? 'bg-white w-6' : 'bg-white/40 hover:bg-white/60' }}"
+                                        data-index="{{ $index }}">
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Staff & Events Section -->
         <section class="pb-20 px-4 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     @forelse($staffList as $staff)
                         <div class="group bg-white/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-slate-200 shadow-lg transition-all duration-500 card-hover" style="animation-delay: {{ $loop->index * 0.15 }}s">
-                            
+
                             <!-- Staff Profile Header -->
                             <div class="relative p-8 pb-6">
                                 <div class="absolute inset-0 bg-gradient-to-br from-amber-100/50 to-transparent"></div>
@@ -319,7 +490,7 @@
                                             <span class="text-white text-lg font-bold">{{ $staff->calendarEvents->count() }}</span>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Name & Position - BIGGER -->
                                     <div class="flex-1">
                                         <h3 class="text-2xl md:text-3xl font-bold text-slate-800 group-hover:text-amber-600 transition-colors duration-300">
@@ -350,7 +521,7 @@
                                                             </h4>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="flex flex-wrap gap-4 text-sm text-slate-600">
                                                         <span class="flex items-center gap-1.5">
                                                             <i class="fa-regular fa-clock text-amber-500"></i>
@@ -365,7 +536,7 @@
                                                             {{ $event->location }}
                                                         </span>
                                                     </div>
-                                                    
+
                                                     @if($event->organization)
                                                         <p class="text-xs text-slate-400 mt-2 flex items-center gap-1.5">
                                                             <i class="fa-regular fa-building"></i>
@@ -438,6 +609,73 @@
         // Update immediately and then every second
         updateClock();
         setInterval(updateClock, 1000);
+
+        // Announcement Slider
+        let currentAnnouncement = 0;
+        const totalAnnouncements = document.querySelectorAll('.announcement-slide').length;
+        let announcementInterval;
+
+        function showAnnouncement(index) {
+            const slides = document.querySelectorAll('.announcement-slide');
+            const dots = document.querySelectorAll('.announcement-dot');
+            
+            slides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.remove('opacity-0', 'translate-x-full', '-translate-x-full');
+                    slide.classList.add('opacity-100', 'translate-x-0');
+                } else if (i < index) {
+                    slide.classList.remove('opacity-100', 'translate-x-0', 'translate-x-full');
+                    slide.classList.add('opacity-0', '-translate-x-full');
+                } else {
+                    slide.classList.remove('opacity-100', 'translate-x-0', '-translate-x-full');
+                    slide.classList.add('opacity-0', 'translate-x-full');
+                }
+            });
+            
+            dots.forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.remove('bg-white/40', 'w-2');
+                    dot.classList.add('bg-white', 'w-6');
+                } else {
+                    dot.classList.remove('bg-white', 'w-6');
+                    dot.classList.add('bg-white/40', 'w-2');
+                }
+            });
+            
+            currentAnnouncement = index;
+        }
+
+        function nextAnnouncement() {
+            const next = (currentAnnouncement + 1) % totalAnnouncements;
+            showAnnouncement(next);
+            resetAutoSlide();
+        }
+
+        function prevAnnouncement() {
+            const prev = (currentAnnouncement - 1 + totalAnnouncements) % totalAnnouncements;
+            showAnnouncement(prev);
+            resetAutoSlide();
+        }
+
+        function goToAnnouncement(index) {
+            showAnnouncement(index);
+            resetAutoSlide();
+        }
+
+        function resetAutoSlide() {
+            clearInterval(announcementInterval);
+            announcementInterval = setInterval(() => {
+                nextAnnouncement();
+            }, 5000);
+        }
+
+        // Start auto-slide
+        if (totalAnnouncements > 0) {
+            announcementInterval = setInterval(() => {
+                const next = (currentAnnouncement + 1) % totalAnnouncements;
+                showAnnouncement(next);
+            }, 5000);
+        }
     </script>
 </body>
 </html>

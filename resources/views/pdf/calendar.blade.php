@@ -1,280 +1,334 @@
 <!DOCTYPE html>
-<html lang="th">
+<html>
 <head>
-    <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>ปฏิทินการปฏิบัติงาน - {{ $date->format('d/m/Y') }}</title>
+    <title>ปฏิทินการปฏิบัติงาน</title>
     <style>
         @font-face {
-            font-family: 'sarabun';
+            font-family: 'THSarabunNew';
             font-style: normal;
             font-weight: normal;
-            src: url("{{ storage_path('fonts/THSarabunNew.ttf') }}") format('truetype');
+            src: url("{{ public_path('fonts/THSarabunNew.ttf') }}") format('truetype');
         }
         @font-face {
-            font-family: 'sarabun';
+            font-family: 'THSarabunNew';
             font-style: normal;
             font-weight: bold;
-            src: url("{{ storage_path('fonts/THSarabunNew Bold.ttf') }}") format('truetype');
+            src: url("{{ public_path('fonts/THSarabunNew Bold.ttf') }}") format('truetype');
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+
+        @page {
+            size: A4 landscape;
+            margin: 8mm;
         }
         
         body {
-            font-family: 'sarabun', 'THSarabunNew', sans-serif;
-            font-size: 16pt;
-            line-height: 1.4;
-            color: #333;
+            font-family: "THSarabunNew", sans-serif;
+            font-size: 14pt;
+            line-height: 1.2;
+            margin: 0;
+            padding: 0;
         }
-
-        /* Header */
+        
         .header {
             text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #2563eb;
-        }
-
-        .header h1 {
-            font-size: 26pt;
-            font-weight: bold;
-            color: #1e40af;
-            margin-bottom: 5px;
-        }
-
-        .header .date {
-            font-size: 20pt;
-            color: #374151;
-            font-weight: bold;
-        }
-
-        .filter-info {
-            text-align: center;
-            font-size: 14pt;
-            color: #6b7280;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
             padding: 8px;
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-        }
-
-        /* Staff Section */
-        .staff-section {
-            margin-bottom: 25px;
-            page-break-inside: avoid;
-        }
-
-        .staff-header {
-            background: #1e3a5f;
+            background-color: #1e3a8a;
             color: white;
-            padding: 12px 15px;
-            margin-bottom: 0;
         }
-
-        .staff-name {
+        
+        .title {
+            font-size: 20pt;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            font-size: 12pt;
+        }
+        
+        .date-badge {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 3px;
+        }
+        
+        .stats-table {
+            width: 100%;
+            margin-bottom: 8px;
+            background-color: #f0f9ff;
+            border-collapse: collapse;
+        }
+        
+        .stats-table td {
+            text-align: center;
+            padding: 5px;
+            border: 1px solid #bae6fd;
+            width: 33.33%;
+        }
+        
+        .stat-number {
             font-size: 18pt;
             font-weight: bold;
+            color: #0369a1;
         }
-
-        .staff-position {
-            font-size: 14pt;
-            color: #fbbf24;
+        
+        .stat-label {
+            font-size: 10pt;
+            color: #64748b;
         }
-
-        .event-count {
-            float: right;
-            background: #f59e0b;
+        
+        .staff-box {
+            border: 1px solid #cbd5e1;
+            background-color: #f8fafc;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .staff-header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 6px;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 6px;
+        }
+        
+        .staff-header-table td {
+            vertical-align: middle;
+            padding: 0;
+        }
+        
+        .photo-td {
+            width: 60px;
+            padding-right: 10px;
+        }
+        
+        .staff-photo {
+            width: 55px;
+            height: 55px;
+        }
+        
+        .staff-initial-box {
+            width: 55px;
+            height: 55px;
+            background-color: #3b82f6;
             color: white;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 12pt;
+            text-align: center;
+            font-size: 24pt;
             font-weight: bold;
+            line-height: 55px;
         }
-
-        /* Events Table */
+        
+        .staff-name {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        
+        .staff-position {
+            font-size: 12pt;
+            color: #64748b;
+        }
+        
         .events-table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
         }
-
-        .events-table th {
-            background: #f3f4f6;
-            padding: 10px 8px;
-            text-align: left;
-            font-weight: bold;
-            border: 1px solid #d1d5db;
-            font-size: 14pt;
-            color: #374151;
-        }
-
+        
         .events-table td {
-            padding: 10px 8px;
-            border: 1px solid #e5e7eb;
+            padding: 5px 8px;
             vertical-align: top;
-            font-size: 14pt;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
         }
-
-        .time-cell {
-            width: 90px;
-            text-align: center;
+        
+        .events-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .event-time-cell {
+            width: 100px;
+            background-color: #dbeafe;
             font-weight: bold;
             color: #1e40af;
-            background: #f8fafc;
+            font-size: 12pt;
+            text-align: center;
         }
-
-        .title-cell {
+        
+        .event-title {
             font-weight: bold;
-            color: #111827;
-        }
-
-        .location {
-            color: #4b5563;
+            color: #1e293b;
             font-size: 13pt;
         }
-
-        .organization {
-            color: #6b7280;
-            font-size: 12pt;
-        }
-
-        .status-cell {
-            width: 80px;
-            text-align: center;
-        }
-
-        .status {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 10px;
+        
+        .event-meta {
             font-size: 11pt;
-            font-weight: bold;
+            color: #64748b;
         }
-
-        .status-confirmed {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-cancelled {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
+        
         .no-events {
             text-align: center;
-            padding: 25px;
-            color: #9ca3af;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
+            padding: 30px;
+            color: #94a3b8;
+            font-size: 14pt;
         }
-
-        .empty-state {
+        
+        .legend-table {
+            width: 100%;
+            margin-top: 8px;
+            border-collapse: collapse;
+        }
+        
+        .legend-table td {
             text-align: center;
-            padding: 50px;
-            color: #6b7280;
+            padding: 3px 10px;
+            font-size: 10pt;
+            color: #64748b;
+            width: 25%;
         }
-
+        
+        .legend-box {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        
+        .legend-box.primary { background-color: #3b82f6; }
+        .legend-box.success { background-color: #22c55e; }
+        .legend-box.warning { background-color: #f59e0b; }
+        .legend-box.danger { background-color: #ef4444; }
+        
         .footer {
-            position: fixed;
-            bottom: 20px;
-            left: 30px;
-            right: 30px;
             text-align: center;
-            font-size: 11pt;
-            color: #9ca3af;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 10px;
+            margin-top: 8px;
+            padding-top: 5px;
+            border-top: 1px solid #e2e8f0;
+            color: #94a3b8;
+            font-size: 10pt;
         }
-
-        .page-number:after {
-            content: counter(page);
+        
+        .color-bar {
+            width: 4px;
+            padding: 0;
         }
-
-        .clearfix::after {
-            content: "";
-            clear: both;
-            display: table;
-        }
+        
+        .color-bar.primary { background-color: #3b82f6; }
+        .color-bar.success { background-color: #22c55e; }
+        .color-bar.warning { background-color: #f59e0b; }
+        .color-bar.danger { background-color: #ef4444; }
     </style>
 </head>
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>ปฏิทินการปฏิบัติงาน</h1>
-        <div class="date">วัน{{ $thaiDate }}</div>
+        <div class="title">ปฏิทินการปฏิบัติงานผู้บริหาร</div>
+        <div class="subtitle">สํานักงานเขตพื้นที่การศึกษาประถมศึกษา</div>
+        <div class="date-badge">{{ $selectedDate->locale('th')->translatedFormat('l') }}ที่ {{ $selectedDate->format('j') }} {{ $selectedDate->locale('th')->translatedFormat('F') }} พ.ศ. {{ $selectedDate->year + 543 }}</div>
     </div>
 
-    <!-- Filter Info -->
-    @if($filterStaff)
-        <div class="filter-info">
-            แสดงเฉพาะ: <strong>{{ $filterStaff->name }}</strong> ({{ $filterStaff->position }})
-        </div>
+    <!-- Statistics -->
+    @php
+        $totalEvents = $staffList->pluck('calendarEvents')->flatten()->count();
+        $staffWithEventsCount = $staffList->filter(fn($s) => $s->calendarEvents->count() > 0)->count();
+    @endphp
+    <table class="stats-table">
+        <tr>
+            <td>
+                <div class="stat-number">{{ $staffWithEventsCount }}</div>
+                <div class="stat-label">ผู้บริหารมีภารกิจ</div>
+            </td>
+            <td>
+                <div class="stat-number">{{ $totalEvents }}</div>
+                <div class="stat-label">กิจกรรมทั้งหมด</div>
+            </td>
+            <td>
+                <div class="stat-number">{{ $staffList->count() }}</div>
+                <div class="stat-label">ผู้บริหารทั้งหมด</div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Staff List - แสดงเป็น Box เรียงลงมา -->
+    @php
+        $staffWithEvents = $staffList->filter(fn($s) => $s->calendarEvents->count() > 0)->values();
+    @endphp
+
+    @if($staffWithEvents->count() > 0)
+        @foreach($staffWithEvents as $staff)
+            <div class="staff-box">
+                <!-- Staff Header -->
+                <table class="staff-header-table">
+                    <tr>
+                        <td class="photo-td">
+                            @php
+                                $photoPath = null;
+                                if ($staff->photo) {
+                                    $possiblePaths = [
+                                        public_path($staff->photo),
+                                        public_path('uploads/' . $staff->photo),
+                                        public_path('uploads/staff-photos/' . basename($staff->photo)),
+                                        public_path(str_replace('uploads/', '', $staff->photo)),
+                                    ];
+                                    foreach ($possiblePaths as $testPath) {
+                                        if (file_exists($testPath)) {
+                                            $photoPath = $testPath;
+                                            break;
+                                        }
+                                    }
+                                }
+                            @endphp
+                            @if($photoPath)
+                                <img src="{{ $photoPath }}" class="staff-photo">
+                            @else
+                                <div class="staff-initial-box">{{ mb_substr($staff->name, 0, 1) }}</div>
+                            @endif
+                        </td>
+                        <td>
+                            <div class="staff-name">{{ $staff->name }}</div>
+                            <div class="staff-position">{{ $staff->position }}</div>
+                        </td>
+                    </tr>
+                </table>
+                
+                <!-- Events Table -->
+                <table class="events-table">
+                    @foreach($staff->calendarEvents as $event)
+                        <tr>
+                            <td class="color-bar {{ $event->status_color }}"></td>
+                            <td class="event-time-cell">
+                                {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }}@if($event->end_time)-{{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}@endif น.
+                            </td>
+                            <td>
+                                <div class="event-title">{{ $event->title }}</div>
+                                <div class="event-meta">
+                                    @if($event->location)สถานที่: {{ $event->location }}@endif
+                                    @if($event->organization) | หน่วยงาน: {{ $event->organization }}@endif
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </table>
+            </div>
+        @endforeach
+    @else
+        <div class="no-events">ไม่มีภารกิจในวันนี้</div>
     @endif
 
-    <!-- Staff Sections -->
-    @forelse($staffWithEvents as $staff)
-        <div class="staff-section">
-            <!-- Staff Header -->
-            <div class="staff-header clearfix">
-                <span class="event-count">{{ $staff->calendarEvents->count() }} กิจกรรม</span>
-                <span class="staff-name">{{ $staff->name }}</span>
-                <span class="staff-position"> - {{ $staff->position }}</span>
-            </div>
-
-            <!-- Events Table -->
-            @if($staff->calendarEvents->count() > 0)
-                <table class="events-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 120px;">เวลา</th>
-                            <th>รายการ / สถานที่</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($staff->calendarEvents as $event)
-                            <tr>
-                                <td class="time-cell">
-                                    {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }}@if($event->end_time) - {{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}@endif น.
-                                </td>
-                                <td>
-                                    <div class="title-cell">{{ $event->title }}</div>
-                                    <div class="location">สถานที่: {{ $event->location }}</div>
-                                    @if($event->organization)
-                                        <div class="organization">หน่วยงาน: {{ $event->organization }}</div>
-                                    @endif
-                                    @if($event->description)
-                                        <div class="organization">หมายเหตุ: {{ $event->description }}</div>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @else
-                <div class="no-events">
-                    ไม่มีกิจกรรมในวันนี้
-                </div>
-            @endif
-        </div>
-    @empty
-        <div class="empty-state">
-            <p style="font-size: 18pt;">ไม่พบข้อมูลผู้ปฏิบัติงาน</p>
-        </div>
-    @endforelse
+    <!-- Legend -->
+    <table class="legend-table">
+        <tr>
+            <td><span class="legend-box primary"></span> นัดหมาย</td>
+            <td><span class="legend-box success"></span> ประชุม</td>
+            <td><span class="legend-box warning"></span> ภารกิจ</td>
+            <td><span class="legend-box danger"></span> วันหยุด</td>
+        </tr>
+    </table>
 
     <!-- Footer -->
     <div class="footer">
-        พิมพ์เมื่อ {{ now()->locale('th')->translatedFormat('j F Y') }} เวลา {{ now()->format('H:i') }} น. &nbsp;|&nbsp; หน้า <span class="page-number"></span>
+        พิมพ์เมื่อ: {{ now()->locale('th')->translatedFormat('j F') }} พ.ศ. {{ now()->year + 543 }} เวลา {{ now()->format('H:i') }} น.
     </div>
 </body>
 </html>

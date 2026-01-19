@@ -22,9 +22,11 @@ class CalendarController extends Controller
         $staffList = Staff::active()
             ->ordered()
             ->when($staffId, fn($q) => $q->where('id', $staffId))
-            ->with(['calendarEvents' => function($query) use ($date) {
-                $query->forDate($date)->orderByTime();
-            }])
+            ->with([
+                'calendarEvents' => function ($query) use ($date) {
+                    $query->forDate($date)->orderByTime();
+                }
+            ])
             ->get();
 
         $pdf = Pdf::loadView('calendar.pdf', [
@@ -32,8 +34,9 @@ class CalendarController extends Controller
             'selectedDate' => $date,
         ]);
 
-        // Set paper size a4 landscape just in case allow for side by side if needed, 
-        // or portrait if preferred. Let's stick to standard portrait for reading lists.
+        // Set paper size to A4 landscape
+        $pdf->setPaper('a4', 'landscape');
+
         return $pdf->stream('calendar-' . $date->format('Y-m-d') . '.pdf');
     }
 }
