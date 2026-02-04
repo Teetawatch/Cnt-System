@@ -315,15 +315,6 @@
         <div class="no-events">ไม่มีภารกิจในวันนี้</div>
     @endif
 
-    <!-- Legend -->
-    <table class="legend-table">
-        <tr>
-            <td><span class="legend-box primary"></span> นัดหมาย</td>
-            <td><span class="legend-box success"></span> ประชุม</td>
-            <td><span class="legend-box warning"></span> ภารกิจ</td>
-            <td><span class="legend-box danger"></span> วันหยุด</td>
-        </tr>
-    </table>
 
     <!-- Footer -->
     <div class="footer">
