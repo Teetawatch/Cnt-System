@@ -55,18 +55,23 @@
             </footer>
         </div>
 
-        <!-- Livewire Scripts (Manual for subfolder /workcnt) -->
+        @php
+            $subfolder = '/workcnt'; // Change this if your subfolder changes
+            $assetUrl = config('app.url');
+        @endphp
+
+        <!-- Livewire Scripts (Manual configuration for subfolder support) -->
         <script>
             window.livewireScriptConfig = {
                 "csrf": "{{ csrf_token() }}",
-                "uri": "/workcnt/livewire/update",
+                "uri": "{{ $subfolder }}/livewire/update",
                 "progressBar": true,
                 "nonce": ""
             };
         </script>
-        <script src="https://nass.ac.th/workcnt/livewire/livewire.js" 
+        <script src="{{ $assetUrl }}/livewire/livewire.js" 
                 data-csrf="{{ csrf_token() }}" 
-                data-update-uri="/workcnt/livewire/update" 
+                data-update-uri="{{ $subfolder }}/livewire/update" 
                 data-navigate-once="true"
                 onload="if(window.Livewire && !Livewire.started){ Livewire.start(); }">
         </script>
