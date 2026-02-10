@@ -29,9 +29,7 @@ Route::get('/calendar/pdf', [App\Http\Controllers\CalendarController::class, 'ex
     ->name('calendar.pdf');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/calendar', function () {
-        return view('calendar.index');
-    })->name('calendar.index');
+    Route::get('/calendar', \App\Livewire\CalendarView::class)->name('calendar.index');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
