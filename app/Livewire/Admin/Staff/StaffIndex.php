@@ -14,6 +14,7 @@ class StaffIndex extends Component
 
     // Search & Filter
     public $search = '';
+    public $perPage = 10;
     
     // Modal states
     public $showModal = false;
@@ -34,7 +35,7 @@ class StaffIndex extends Component
     public $deleteId;
     public $deleteName;
 
-    protected $queryString = ['search'];
+    protected $queryString = ['search', 'perPage'];
 
     protected function rules()
     {
@@ -199,7 +200,7 @@ class StaffIndex extends Component
                       ->orWhere('department', 'like', '%' . $this->search . '%');
             })
             ->ordered()
-            ->paginate(10);
+            ->paginate($this->perPage);
 
         return view('livewire.admin.staff.staff-index', [
             'staffList' => $staff,
