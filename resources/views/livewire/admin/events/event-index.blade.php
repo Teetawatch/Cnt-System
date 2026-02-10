@@ -12,13 +12,16 @@
                     <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">เพิ่ม แก้ไข ลบ รายการปฏิทินการปฏิบัติงาน</p>
                 </div>
             </div>
-            
-            <button wire:click="openCreateModal" class="btn-primary group">
-                <i class="fa-solid fa-plus me-2 transition-transform group-hover:rotate-90"></i>
-                เพิ่มกิจกรรมใหม่
-            </button>
         </div>
     </x-slot>
+
+    <!-- Action Button (must be inside Livewire component scope) -->
+    <div class="flex justify-end mb-6">
+        <button wire:click="openCreateModal" class="btn-primary group">
+            <i class="fa-solid fa-plus me-2 transition-transform group-hover:rotate-90"></i>
+            เพิ่มกิจกรรมใหม่
+        </button>
+    </div>
 
     <!-- Content Container -->
     <div class="space-y-6">
