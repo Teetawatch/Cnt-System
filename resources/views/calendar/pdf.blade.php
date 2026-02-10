@@ -264,12 +264,17 @@
                             @php
                                 $photoPath = null;
                                 if ($staff->photo) {
+                                    // Base directory for shared hosting subfolder
+                                    $basePath = base_path('../../../public_html/workcnt');
+                                    
                                     $possiblePaths = [
-                                        public_path('uploads/staff-photos/' . $staff->photo),
                                         public_path('uploads/staff-photos/' . basename($staff->photo)),
                                         public_path($staff->photo),
-                                        public_path('uploads/' . $staff->photo),
+                                        // Specific for shared hosting structure mentioned by user
+                                        $basePath . '/uploads/staff-photos/' . basename($staff->photo),
+                                        base_path('../public_html/workcnt/' . $staff->photo),
                                     ];
+                                    
                                     foreach ($possiblePaths as $testPath) {
                                         if (file_exists($testPath)) {
                                             $photoPath = $testPath;
