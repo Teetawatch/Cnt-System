@@ -85,23 +85,43 @@
             @foreach($staffList as $staff)
                 <div class="glass-card overflow-hidden animate-slide-up">
                     <!-- Staff Header -->
-                    <div class="p-4 text-white" style="background: linear-gradient(to right, #2563eb, #1d4ed8);">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                                @if($staff->photo)
-                                    <img src="{{ $staff->photo_url }}" alt="" class="w-12 h-12 rounded-full object-cover">
-                                @else
-                                    <i class="fa-solid fa-user text-xl"></i>
+                    <div class="p-5 text-white relative overflow-hidden" style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <!-- Decorative Glows -->
+                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+                        <div class="absolute -bottom-10 -left-10 w-24 h-24 bg-blue-400/20 rounded-full blur-2xl"></div>
+
+                        <div class="relative flex items-center gap-4">
+                            <div class="relative">
+                                <div class="absolute -inset-1 bg-white/20 rounded-full blur-sm"></div>
+                                <div class="relative w-14 h-14 bg-white/20 rounded-full flex items-center justify-center border-2 border-white/50 shadow-lg overflow-hidden">
+                                    @if($staff->photo)
+                                        <img src="{{ $staff->photo_url }}" alt="" class="w-full h-full object-cover">
+                                    @else
+                                        <i class="fa-solid fa-user text-2xl"></i>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-xl text-white tracking-tight drop-shadow-md leading-tight">
+                                    {{ $staff->name }}
+                                </h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="bg-white/15 backdrop-blur-sm border border-white/20 px-2.5 py-0.5 rounded-lg text-[10px] font-semibold text-white uppercase tracking-wider shadow-sm">
+                                        {{ $staff->position }}
+                                    </span>
+                                </div>
+                                @if($staff->description)
+                                    <div class="mt-2.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-2 flex items-start gap-2 group-hover:bg-white/15 transition-colors">
+                                        <i class="fa-solid fa-circle-info text-[10px] mt-0.5 text-blue-200"></i>
+                                        <p class="text-white text-xs font-medium leading-tight">{{ $staff->description }}</p>
+                                    </div>
                                 @endif
                             </div>
-                            <div>
-                                <h4 class="font-semibold text-lg">{{ $staff->name }}</h4>
-                                <p class="text-blue-100 text-sm">{{ $staff->position }}</p>
-                            </div>
-                            <div class="ms-auto">
-                                <span class="bg-white/20 px-3 py-1 rounded-full text-sm">
-                                    {{ $staff->calendarEvents->count() }} รายการ
-                                </span>
+                            <div class="ms-auto flex flex-col items-end">
+                                <div class="bg-black/20 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-2xl text-center shadow-lg min-w-[70px]">
+                                    <span class="block text-lg font-bold leading-none">{{ $staff->calendarEvents->count() }}</span>
+                                    <span class="text-[9px] uppercase tracking-tighter opacity-80 font-semibold">รายการ</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -130,6 +150,12 @@
                                         <p class="text-sm text-gray-400">
                                             <i class="fa-solid fa-building me-1"></i>
                                             {{ $event->organization }}
+                                        </p>
+                                    @endif
+                                    @if($event->description)
+                                        <p class="text-sm text-gray-500 mt-1">
+                                            <i class="fa-solid fa-align-left me-1"></i>
+                                            {{ $event->description }}
                                         </p>
                                     @endif
                                 </div>
