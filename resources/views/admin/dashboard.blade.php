@@ -72,7 +72,7 @@
                     <i class="fa-solid fa-users me-2 text-primary-500"></i>
                     จัดการผู้ปฏิบัติงาน
                 </h3>
-                <a href="{{ route('admin.staff.index') }}" class="btn-primary text-sm">
+                <a href="{{ url('/admin/staff') }}" class="btn-primary text-sm">
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
@@ -113,7 +113,7 @@
                     <i class="fa-solid fa-calendar-plus me-2 text-success-500"></i>
                     กิจกรรมล่าสุด
                 </h3>
-                <a href="{{ route('admin.events.index') }}" class="btn-primary text-sm">
+                <a href="{{ url('/admin/calendar-events') }}" class="btn-primary text-sm">
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>

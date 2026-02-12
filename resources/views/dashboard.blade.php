@@ -63,7 +63,7 @@
                 </a>
                 @auth
                     @if(Auth::user()->isAdmin())
-                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center px-5 py-3 bg-indigo-800/50 text-white border border-indigo-400/30 rounded-xl font-medium backdrop-blur-sm hover:bg-indigo-800/70 transition-all hover:scale-105 active:scale-95">
+                        <a href="{{ url('/admin') }}" class="inline-flex items-center px-5 py-3 bg-indigo-800/50 text-white border border-indigo-400/30 rounded-xl font-medium backdrop-blur-sm hover:bg-indigo-800/70 transition-all hover:scale-105 active:scale-95">
                             <i class="fa-solid fa-shield-halved me-2"></i>
                             จัดการระบบ
                         </a>
@@ -236,7 +236,7 @@
 
                     @auth
                         @if(Auth::user()->isAdmin())
-                            <a href="{{ route('admin.staff.index') }}" class="flex items-center gap-4 p-3 rounded-xl bg-white border border-slate-100 hover:border-emerald-200 hover:shadow-md hover:bg-emerald-50/50 transition-all duration-300 group">
+                            <a href="{{ route('filament.admin.resources.staff.index') }}" class="flex items-center gap-4 p-3 rounded-xl bg-white border border-slate-100 hover:border-emerald-200 hover:shadow-md hover:bg-emerald-50/50 transition-all duration-300 group">
                                 <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                                     <i class="fa-solid fa-user-plus"></i>
                                 </div>
@@ -247,7 +247,7 @@
                                 <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all"></i>
                             </a>
 
-                            <a href="{{ route('admin.events.index') }}" class="flex items-center gap-4 p-3 rounded-xl bg-white border border-slate-100 hover:border-amber-200 hover:shadow-md hover:bg-amber-50/50 transition-all duration-300 group">
+                            <a href="{{ route('filament.admin.resources.calendar-events.index') }}" class="flex items-center gap-4 p-3 rounded-xl bg-white border border-slate-100 hover:border-amber-200 hover:shadow-md hover:bg-amber-50/50 transition-all duration-300 group">
                                 <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                                     <i class="fa-solid fa-calendar-plus"></i>
                                 </div>

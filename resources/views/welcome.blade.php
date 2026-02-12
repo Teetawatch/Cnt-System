@@ -228,7 +228,7 @@
                     </a>
 
                     @auth
-                        <a href="{{ route('admin.staff.index') }}"
+                        <a href="{{ url('/admin') }}"
                             class="flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition-all duration-300 shadow-xl shadow-slate-900/20 shine-effect">
                             <i class="fa-solid fa-gear text-amber-400"></i>
                             <span class="hidden sm:inline">จัดการข้อมูล</span>

@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Admin\Staff\StaffIndex;
-use App\Livewire\Admin\Events\EventIndex;
+
 use App\Http\Controllers\ProfileController;
 
 /*
@@ -37,14 +36,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Admin Only Routes
-Route::middleware(['auth', 'verified', 'admin'])->prefix('old-admin')->name('admin.')->group(function () {
-    // Staff Management (Livewire)
-    Route::get('/', StaffIndex::class)->name('dashboard');
-    Route::get('/staff', StaffIndex::class)->name('staff.index');
 
-    // Calendar Events Management (Livewire)
-    Route::get('/events', EventIndex::class)->name('events.index');
-});
 
 require __DIR__.'/auth.php';

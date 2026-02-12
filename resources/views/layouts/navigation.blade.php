@@ -29,13 +29,13 @@
                         </x-nav-link>
 
                         @if(Auth::user()->isAdmin())
-                            <x-nav-link :href="route('admin.staff.index')" :active="request()->routeIs('admin.staff.*')" class="nav-link-modern {{ request()->routeIs('admin.staff.*') ? 'nav-link-active' : '' }}">
-                                <i class="fa-solid fa-users me-2 {{ request()->routeIs('admin.staff.*') ? 'text-indigo-600' : 'text-slate-400' }}"></i>
+                            <x-nav-link :href="route('filament.admin.resources.staff.index')" :active="request()->routeIs('filament.admin.resources.staff.*')" class="nav-link-modern {{ request()->routeIs('filament.admin.resources.staff.*') ? 'nav-link-active' : '' }}">
+                                <i class="fa-solid fa-users me-2 {{ request()->routeIs('filament.admin.resources.staff.*') ? 'text-indigo-600' : 'text-slate-400' }}"></i>
                                 {{ __('จัดการผู้ปฏิบัติ') }}
                             </x-nav-link>
 
-                            <x-nav-link :href="route('admin.events.index')" :active="request()->routeIs('admin.events.*')" class="nav-link-modern {{ request()->routeIs('admin.events.*') ? 'nav-link-active' : '' }}">
-                                <i class="fa-solid fa-calendar-plus me-2 {{ request()->routeIs('admin.events.*') ? 'text-indigo-600' : 'text-slate-400' }}"></i>
+                            <x-nav-link :href="route('filament.admin.resources.calendar-events.index')" :active="request()->routeIs('filament.admin.resources.calendar-events.*')" class="nav-link-modern {{ request()->routeIs('filament.admin.resources.calendar-events.*') ? 'nav-link-active' : '' }}">
+                                <i class="fa-solid fa-calendar-plus me-2 {{ request()->routeIs('filament.admin.resources.calendar-events.*') ? 'text-indigo-600' : 'text-slate-400' }}"></i>
                                 {{ __('จัดการกิจกรรม') }}
                             </x-nav-link>
                         @endif
@@ -84,7 +84,16 @@
                                     <p class="text-xs text-slate-500 uppercase font-semibold">ผู้ดูแลระบบ</p>
                                 </div>
                                 
-                                <x-dropdown-link :href="route('admin.staff.index')" class="hover:bg-slate-50 group">
+                                <x-dropdown-link :href="url('/admin')" class="hover:bg-slate-50 group">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                                            <i class="fa-solid fa-shield-halved"></i>
+                                        </div>
+                                        <span>{{ __('แดชบอร์ดผู้ดูแล') }}</span>
+                                    </div>
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('filament.admin.resources.staff.index')" class="hover:bg-slate-50 group">
                                     <div class="flex items-center gap-2">
                                         <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
                                             <i class="fa-solid fa-users"></i>
@@ -93,7 +102,7 @@
                                     </div>
                                 </x-dropdown-link>
 
-                                <x-dropdown-link :href="route('admin.events.index')" class="hover:bg-slate-50 group">
+                                <x-dropdown-link :href="route('filament.admin.resources.calendar-events.index')" class="hover:bg-slate-50 group">
                                     <div class="flex items-center gap-2">
                                         <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
                                             <i class="fa-solid fa-calendar-plus"></i>
@@ -160,17 +169,17 @@
                 @if(Auth::user()->isAdmin())
                     <div class="py-2 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">เมนูผู้ดูแล</div>
                     
-                    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" class="border-l-4 border-transparent hover:border-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : '' }}">
+                    <x-responsive-nav-link :href="url('/admin')" :active="request()->is('admin*')" class="border-l-4 border-transparent hover:border-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 {{ request()->is('admin*') ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : '' }}">
                         <i class="fa-solid fa-shield-halved me-2"></i>
                         {{ __('แดชบอร์ดผู้ดูแล') }}
                     </x-responsive-nav-link>
 
-                    <x-responsive-nav-link :href="route('admin.staff.index')" :active="request()->routeIs('admin.staff.*')" class="border-l-4 border-transparent hover:border-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 {{ request()->routeIs('admin.staff.*') ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : '' }}">
+                    <x-responsive-nav-link :href="route('filament.admin.resources.staff.index')" :active="request()->routeIs('filament.admin.resources.staff.*')" class="border-l-4 border-transparent hover:border-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 {{ request()->routeIs('filament.admin.resources.staff.*') ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : '' }}">
                         <i class="fa-solid fa-users me-2"></i>
                         {{ __('จัดการผู้ปฏิบัติ') }}
                     </x-responsive-nav-link>
 
-                    <x-responsive-nav-link :href="route('admin.events.index')" :active="request()->routeIs('admin.events.*')" class="border-l-4 border-transparent hover:border-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 {{ request()->routeIs('admin.events.*') ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : '' }}">
+                    <x-responsive-nav-link :href="route('filament.admin.resources.calendar-events.index')" :active="request()->routeIs('filament.admin.resources.calendar-events.*')" class="border-l-4 border-transparent hover:border-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 {{ request()->routeIs('filament.admin.resources.calendar-events.*') ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : '' }}">
                         <i class="fa-solid fa-calendar-plus me-2"></i>
                         {{ __('จัดการกิจกรรม') }}
                     </x-responsive-nav-link>
