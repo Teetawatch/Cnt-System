@@ -15,28 +15,31 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
+// Home Redirect
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
-
 // Calendar PDF Export (Make Public)
-Route::get('/calendar/pdf', [App\Http\Controllers\CalendarController::class, 'exportPdf'])
+Route::get('/admin/calendar/pdf', [App\Http\Controllers\CalendarController::class, 'exportPdf'])
     ->name('calendar.pdf');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/calendar', \App\Livewire\CalendarView::class)->name('calendar.index');
-    
-    // Admin Routes
-    Route::get('/admin', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    // Admin & Management Routes
+    Route::prefix('admin')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('admin.dashboard'); // Primary name for Sidebar
+        
+        // Alias for compatibility
+        Route::get('/home', function () {
+            return redirect()->route('admin.dashboard');
+        })->name('dashboard');
 
-    Route::get('/admin/staff', \App\Livewire\Admin\Staff\StaffIndex::class)->name('staff.index');
-    Route::get('/admin/events', \App\Livewire\Admin\Events\EventIndex::class)->name('calendar.manage');
+        Route::get('/calendar', \App\Livewire\CalendarView::class)->name('calendar.index');
+        Route::get('/staff', \App\Livewire\Admin\Staff\StaffIndex::class)->name('staff.index');
+        Route::get('/events', \App\Livewire\Admin\Events\EventIndex::class)->name('calendar.manage');
+    });
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -86,7 +86,7 @@
         </div>
 
         <!-- Events Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             @forelse($staffWithEvents as $staff)
                 <div class="glass-card overflow-hidden hover:shadow-xl transition-all duration-300 group flex flex-col h-full animate-fade-in-up" style="animation-delay: {{ $loop->index * 100 }}ms">
                     <!-- Staff Header -->
@@ -123,38 +123,63 @@
                     <div class="p-4 space-y-3 flex-1 bg-white/40 dark:bg-slate-800/40">
                         @forelse($staff->calendarEvents as $event)
                             <div wire:click="showEvent({{ $event->id }})" 
-                                 class="relative bg-white dark:bg-slate-700 rounded-xl p-3 border border-slate-100 dark:border-slate-600 shadow-sm hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-500/50 transition-all cursor-pointer group/event overflow-hidden">
+                                 class="relative bg-white dark:bg-slate-700 rounded-xl p-4 border border-slate-100 dark:border-slate-600 shadow-sm hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-500/50 transition-all cursor-pointer group/event overflow-hidden">
                                 
                                 <div class="absolute left-0 top-0 bottom-0 w-1 bg-{{ $event->status_color }}-500"></div>
                                 
-                                <div class="flex gap-3 pl-2">
+                                <div class="flex flex-col sm:flex-row sm:items-start gap-4 pl-2">
                                     <!-- Time -->
-                                    <div class="flex flex-col items-center justify-center min-w-[3.5rem] px-2 py-1 bg-slate-50 dark:bg-slate-600 rounded-lg border border-slate-100 dark:border-slate-500">
+                                    <div class="flex flex-col items-center justify-center min-w-[4rem] px-2 py-2 bg-slate-50 dark:bg-slate-600 rounded-lg border border-slate-100 dark:border-slate-500">
                                         <span class="text-sm font-bold text-slate-700 dark:text-white">{{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }}</span>
                                         @if($event->end_time)
-                                            <span class="text-[10px] text-slate-400">{{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
+                                            <div class="w-4 h-px bg-slate-200 dark:bg-slate-500 my-1"></div>
+                                            <span class="text-xs font-semibold text-slate-400">{{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
                                         @endif
                                     </div>
                                     
                                     <!-- Info -->
-                                    <div class="flex-1 min-w-0 py-0.5">
-                                        <h5 class="font-bold text-slate-800 dark:text-white text-sm truncate group-hover/event:text-indigo-600 transition-colors">{{ $event->title }}</h5>
-                                        <div class="flex items-center gap-3 mt-1.5">
-                                            <span class="text-xs text-slate-500 flex items-center gap-1 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">
-                                                <i class="fa-solid fa-location-dot text-rose-400"></i>
-                                                {{ Str::limit($event->location, 15) }}
-                                            </span>
-                                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-{{ $event->status_color }}-50 text-{{ $event->status_color }}-600 border border-{{ $event->status_color }}-100">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex justify-between items-start gap-2 mb-2">
+                                            <h5 class="font-bold text-slate-800 dark:text-white text-base leading-tight group-hover/event:text-indigo-600 transition-colors">{{ $event->title }}</h5>
+                                            <span class="inline-flex shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-{{ $event->status_color }}-50 text-{{ $event->status_color }}-600 border border-{{ $event->status_color }}-100 shadow-sm">
                                                 {{ $event->status_label }}
                                             </span>
                                         </div>
+
+                                        <div class="flex flex-wrap gap-2 mt-2">
+                                            <span class="text-xs font-medium text-slate-600 dark:text-slate-300 flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-100 dark:border-slate-700">
+                                                <i class="fa-solid fa-location-dot text-rose-400"></i>
+                                                {{ $event->location }}
+                                            </span>
+                                            @if($event->organization)
+                                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300 flex items-center gap-1.5 bg-indigo-50/50 dark:bg-indigo-900/20 px-2.5 py-1 rounded-lg border border-indigo-100/50 dark:border-indigo-800/50">
+                                                    <i class="fa-solid fa-building text-indigo-400"></i>
+                                                    {{ $event->organization }}
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                        @if($event->description)
+                                            <div class="mt-4 p-3 bg-slate-50/50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 group/desc transition-colors hover:border-indigo-300/50">
+                                                <div class="flex gap-2.5">
+                                                    <div class="shrink-0 mt-1">
+                                                        <i class="fa-solid fa-quote-left text-xs text-indigo-400 opacity-50"></i>
+                                                    </div>
+                                                    <p class="text-sm leading-relaxed text-slate-600 dark:text-slate-300 italic font-medium">
+                                                        {{ $event->description }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         @empty
-                            <div class="h-full flex flex-col items-center justify-center py-8 text-slate-400">
-                                <i class="fa-regular fa-calendar text-2xl mb-2 opacity-50"></i>
-                                <p class="text-sm">ไม่มีกิจกรรมวันนี้</p>
+                            <div class="h-full flex flex-col items-center justify-center py-12 text-slate-400">
+                                <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fa-regular fa-calendar-check text-2xl opacity-30"></i>
+                                </div>
+                                <p class="text-sm font-medium">ไม่มีกิจกรรมวันนี้</p>
                             </div>
                         @endforelse
                     </div>

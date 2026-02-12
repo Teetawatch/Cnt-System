@@ -92,6 +92,6 @@ class CalendarView extends Component
             'allStaff' => $allStaff,
             'totalEvents' => $totalEvents,
             'dateObject' => $date,
-        ])->layout('layouts.app');
+        ])->layout('layouts.admin');
     }
 }

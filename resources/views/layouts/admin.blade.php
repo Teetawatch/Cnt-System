@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'ระบบปฏิทินการปฏิบัติงาน') }} - Admin Panel</title>
+        <title>ปฏิทินการปฏิบัติงาน</title>
 
         <!-- Google Fonts: Kanit -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,89 +27,106 @@
         <style>
             [x-cloak] { display: none !important; }
             
-            .sidebar-link-active {
-                @apply bg-indigo-50 text-indigo-700 border-r-4 border-indigo-600 font-bold;
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 4px;
             }
-            
-            .sidebar-link {
-                @apply flex items-center gap-3 px-6 py-3.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/50 transition-all duration-200 border-r-4 border-transparent;
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: transparent;
             }
-
-            .glass-card {
-                @apply bg-white/80 backdrop-blur-md border border-slate-200/60 shadow-sm rounded-2xl;
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: #e2e8f0; /* slate-200 */
+                border-radius: 9999px;
             }
         </style>
     </head>
-    <body class="font-sans antialiased text-slate-600 bg-slate-50 relative" x-data="{ sidebarOpen: false }">
+    <body class="font-sans antialiased text-slate-600 bg-slate-50 relative selection:bg-indigo-100 selection:text-indigo-900" x-data="{ sidebarOpen: false }">
         
         <!-- Background Pattern -->
         <div class="fixed inset-0 z-[-1] h-full w-full bg-slate-50 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
 
         <div class="flex min-h-screen">
             <!-- Sidebar for Desktop -->
-            <aside class="hidden lg:flex lg:flex-shrink-0 lg:w-72 flex-col bg-white border-r border-slate-200 shadow-xl shadow-slate-200/50 fixed inset-y-0 z-50">
-                <div class="p-8 flex items-center justify-center border-b border-slate-100 mb-4">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group">
-                        <div class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-xl shadow-lg shadow-indigo-500/30 flex items-center justify-center transition-transform group-hover:rotate-3 group-hover:scale-105">
-                            <i class="fa-solid fa-calendar-check text-white text-lg"></i>
+            <aside class="hidden lg:flex lg:flex-shrink-0 lg:w-72 flex-col bg-white border-r border-slate-200 shadow-[20px_0_30px_rgba(0,0,0,0.02)] fixed inset-y-0 z-50">
+                <!-- Branding -->
+                <div class="h-20 flex items-center px-8 border-b border-slate-100 bg-white">
+                    <a href="{{ route('home') }}" class="flex items-center gap-3 group">
+                        <div class="w-9 h-9 bg-indigo-600 rounded-lg shadow-lg shadow-indigo-600/20 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
+                            <i class="fa-solid fa-calendar-check text-white text-base"></i>
                         </div>
-                        <span class="font-bold text-xl tracking-tight text-slate-800">Admin Panel</span>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-lg tracking-tight text-slate-800 leading-none">Admin Panel</span>
+                            <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-1">CntSystem</span>
+                        </div>
                     </a>
                 </div>
 
-                <div class="flex-grow flex flex-col pt-2 overflow-y-auto custom-scrollbar">
-                    <nav class="flex-1 space-y-1">
-                        <div class="px-6 py-4">
-                            <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-600 rounded-xl border border-slate-100 hover:bg-slate-100 hover:text-indigo-600 transition-all font-medium text-sm group">
-                                <i class="fa-solid fa-arrow-left text-xs transition-transform group-hover:-translate-x-1"></i>
-                                <span>กลับสู่หน้าหลัก</span>
-                            </a>
-                        </div>
-
-                        <div class="px-6 py-2 text-[10px] uppercase font-bold text-slate-400 tracking-widest">Main Menu</div>
+                <div class="flex-grow flex flex-col pt-4 overflow-y-auto custom-scrollbar bg-white">
+                    <nav class="flex flex-col px-3 space-y-1">
+                        <!-- Navigation Groups -->
+                        <div class="px-4 py-3 text-[10px] uppercase font-bold text-slate-400 tracking-[0.2em]">Navigation</div>
                         
-                        <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'sidebar-link-active' : '' }}">
-                            <i class="fa-solid fa-gauge-high w-5"></i>
-                            <span>{{ __('แดชบอร์ด') }}</span>
+                        <a href="{{ route('home') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-50 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-white transition-colors">
+                                <i class="fa-solid fa-arrow-left text-xs"></i>
+                            </div>
+                            <span class="text-sm font-medium">หน้าหลัก (ผู้ใช้)</span>
                         </a>
 
-                        <div class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-widest mt-4">Management</div>
+                        <a href="{{ route('admin.dashboard') }}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-50 text-indigo-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600' }}">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-white shadow-sm' : 'bg-transparent' }}">
+                                <i class="fa-solid fa-chart-line text-sm"></i>
+                            </div>
+                            <span class="text-sm {{ request()->routeIs('admin.dashboard') ? 'font-bold' : 'font-medium' }}">{{ __('แดชบอร์ด') }}</span>
+                        </a>
+
+                        <div class="px-4 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-[0.2em] mt-2">Management</div>
                         
-                        <a href="{{ route('staff.index') }}" class="sidebar-link {{ request()->routeIs('staff.*') ? 'sidebar-link-active' : '' }}">
-                            <i class="fa-solid fa-users w-5"></i>
-                            <span>{{ __('จัดการผู้ปฏิบัติ') }}</span>
+                        <a href="{{ route('staff.index') }}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('staff.*') ? 'bg-indigo-50 text-indigo-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600' }}">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('staff.*') ? 'bg-white shadow-sm' : 'bg-transparent' }}">
+                                <i class="fa-solid fa-user-gear text-sm"></i>
+                            </div>
+                            <span class="text-sm {{ request()->routeIs('staff.*') ? 'font-bold' : 'font-medium' }}">{{ __('จัดการผู้ปฏิบัติ') }}</span>
                         </a>
 
-                        <a href="{{ route('calendar.manage') }}" class="sidebar-link {{ request()->routeIs('calendar.manage') ? 'sidebar-link-active' : '' }}">
-                            <i class="fa-solid fa-calendar-plus w-5"></i>
-                            <span>{{ __('จัดการกิจกรรม') }}</span>
+                        <a href="{{ route('calendar.manage') }}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('calendar.manage') ? 'bg-indigo-50 text-indigo-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600' }}">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('calendar.manage') ? 'bg-white shadow-sm' : 'bg-transparent' }}">
+                                <i class="fa-solid fa-calendar-plus text-sm"></i>
+                            </div>
+                            <span class="text-sm {{ request()->routeIs('calendar.manage') ? 'font-bold' : 'font-medium' }}">{{ __('จัดการกิจกรรม') }}</span>
                         </a>
 
-                        <div class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-widest mt-4">Tools</div>
+                        <div class="px-4 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-[0.2em] mt-2">Personal</div>
 
-                        <a href="{{ route('calendar.index') }}" class="sidebar-link {{ request()->routeIs('calendar.index') ? 'sidebar-link-active' : '' }}">
-                            <i class="fa-solid fa-calendar-days w-5"></i>
-                            <span>{{ __('ดูปฏิทินรวม') }}</span>
+                        <a href="{{ route('calendar.index') }}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('calendar.index') ? 'bg-indigo-50 text-indigo-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600' }}">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('calendar.index') ? 'bg-white shadow-sm' : 'bg-transparent' }}">
+                                <i class="fa-solid fa-calendar-days text-sm"></i>
+                            </div>
+                            <span class="text-sm {{ request()->routeIs('calendar.index') ? 'font-bold' : 'font-medium' }}">{{ __('ดูปฏิทินรวม') }}</span>
                         </a>
                     </nav>
 
-                    <!-- User Profile Pin at Bottom -->
-                    <div class="p-6 border-t border-slate-100 bg-slate-50/50">
-                        <div class="flex items-center gap-3 text-sm">
-                            <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">
-                                {{ substr(Auth::user()->name, 0, 1) }}
-                            </div>
-                            <div class="flex-grow">
-                                <p class="font-bold text-slate-800 leading-none">{{ Auth::user()->name }}</p>
-                                <p class="text-[10px] text-slate-400 mt-1 uppercase">{{ Auth::user()->role }}</p>
-                            </div>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="text-slate-400 hover:text-rose-500 transition-colors">
-                                    <i class="fa-solid fa-right-from-bracket"></i>
-                                </button>
-                            </form>
+                </div>
+
+                <!-- User Profile Pin at Bottom -->
+                <div class="p-4 border-t border-slate-100 bg-slate-50/30">
+                    <div class="flex items-center gap-3 px-2">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold border border-indigo-200 shadow-sm">
+                            {{ substr(Auth::user()->name, 0, 1) }}
                         </div>
+                        <div class="flex-grow min-w-0">
+                            <p class="font-bold text-slate-800 text-sm truncate leading-none">{{ Auth::user()->name }}</p>
+                            <p class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Admin User</p>
+                        </div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </aside>
@@ -125,39 +142,61 @@
                    x-transition:leave="transition ease-in-out duration-300 transform" 
                    x-transition:leave-start="translate-x-0" 
                    x-transition:leave-end="-translate-x-full" 
-                   class="fixed inset-y-0 left-0 w-72 bg-white z-50 lg:hidden flex flex-col shadow-2xl">
+                   class="fixed inset-y-0 left-0 w-72 glass-sidebar z-50 lg:hidden flex flex-col shadow-2xl">
                 
-                <div class="p-6 flex items-center justify-between border-b border-slate-100">
+                <div class="h-20 flex items-center justify-between px-6 border-b border-white/5">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
-                            <i class="fa-solid fa-calendar-check"></i>
+                        <div class="w-8 h-8 bg-gradient-to-tr from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center text-white">
+                            <i class="fa-solid fa-calendar-check text-sm"></i>
                         </div>
-                        <span class="font-bold text-lg text-slate-800">Admin Panel</span>
+                        <span class="font-bold text-lg text-white">Admin Panel</span>
                     </div>
-                    <button @click="sidebarOpen = false" class="text-slate-400 hover:text-slate-600">
-                        <i class="fa-solid fa-xmark text-xl"></i>
+                    <button @click="sidebarOpen = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-slate-400 hover:text-white transition-colors">
+                        <i class="fa-solid fa-xmark text-sm"></i>
                     </button>
                 </div>
 
-                <div class="flex-grow overflow-y-auto pt-4">
-                    <nav class="space-y-1">
-                        <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'sidebar-link-active' : '' }}">
-                            <i class="fa-solid fa-gauge-high w-5"></i>
-                            <span>{{ __('แดชบอร์ด') }}</span>
+                <div class="flex-grow overflow-y-auto pt-4 bg-white custom-scrollbar">
+                    <nav class="flex flex-col px-3 space-y-1">
+                        <div class="px-4 py-2 text-[10px] uppercase font-bold text-slate-400 tracking-[0.2em]">Navigation</div>
+                        <a href="{{ route('admin.dashboard') }}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-50 text-indigo-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600' }}">
+                            <i class="fa-solid fa-chart-line w-5 text-center"></i>
+                            <span class="text-sm font-medium">{{ __('แดชบอร์ด') }}</span>
                         </a>
-                        <a href="{{ route('staff.index') }}" class="sidebar-link {{ request()->routeIs('staff.*') ? 'sidebar-link-active' : '' }}">
-                            <i class="fa-solid fa-users w-5"></i>
-                            <span>{{ __('จัดการผู้ปฏิบัติ') }}</span>
+                        
+                        <div class="px-4 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-[0.2em] mt-2">Management</div>
+                        <a href="{{ route('staff.index') }}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 {{ request()->routeIs('staff.*') ? 'bg-indigo-50 text-indigo-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600' }}">
+                            <i class="fa-solid fa-user-gear w-5 text-center"></i>
+                            <span class="text-sm font-medium">{{ __('จัดการผู้ปฏิบัติ') }}</span>
                         </a>
-                        <a href="{{ route('calendar.manage') }}" class="sidebar-link {{ request()->routeIs('calendar.manage') ? 'sidebar-link-active' : '' }}">
-                            <i class="fa-solid fa-calendar-plus w-5"></i>
-                            <span>{{ __('จัดการกิจกรรม') }}</span>
+                        <a href="{{ route('calendar.manage') }}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 {{ request()->routeIs('calendar.manage') ? 'bg-indigo-50 text-indigo-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600' }}">
+                            <i class="fa-solid fa-calendar-plus w-5 text-center"></i>
+                            <span class="text-sm font-medium">{{ __('จัดการกิจกรรม') }}</span>
                         </a>
-                        <a href="{{ route('calendar.index') }}" class="sidebar-link {{ request()->routeIs('calendar.index') ? 'sidebar-link-active' : '' }}">
-                            <i class="fa-solid fa-calendar-days w-5"></i>
-                            <span>{{ __('ดูปฏิทินรวม') }}</span>
+                        
+                        <div class="px-4 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-[0.2em] mt-2">Personal</div>
+                        <a href="{{ route('calendar.index') }}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 {{ request()->routeIs('calendar.index') ? 'bg-indigo-50 text-indigo-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600' }}">
+                            <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                            <span class="text-sm font-medium">{{ __('ดูปฏิทินรวม') }}</span>
                         </a>
                     </nav>
+                </div>
+
+                <!-- Mobile Profile Info -->
+                <div class="p-6 border-t border-white/5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold shadow-lg">
+                            {{ substr(Auth::user()->name, 0, 1) }}
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <p class="font-bold text-white text-sm truncate leading-none">{{ Auth::user()->name }}</p>
+                            <p class="text-[10px] text-slate-500 mt-1 uppercase font-bold tracking-tighter">Administrator</p>
+                        </div>
+                    </div>
                 </div>
             </aside>
 
@@ -183,7 +222,7 @@
                 <!-- Page Header (Shared between layouts but integrated into sidebar layout better) -->
                 @if (isset($header))
                     <div class="mt-16 lg:mt-0 pt-8 px-6 lg:px-10 pb-4">
-                        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
                             {{ $header }}
                         </div>
                     </div>
@@ -191,14 +230,14 @@
 
                 <!-- Content Body -->
                 <main class="flex-grow px-6 lg:px-10 py-6">
-                    <div class="max-w-7xl mx-auto animate-fade-in-up">
+                    <div class="max-w-[1600px] mx-auto animate-fade-in-up">
                         {{ $slot }}
                     </div>
                 </main>
 
                 <!-- Admin Footer -->
                 <footer class="px-6 lg:px-10 py-6 border-t border-slate-200 bg-white/50 backdrop-blur-sm mt-8">
-                    <div class="max-w-7xl mx-auto text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-xs font-medium">
+                    <div class="max-w-[1600px] mx-auto text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-xs font-medium">
                         <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
                         <div class="flex items-center gap-4">
                             <a href="#" class="hover:text-indigo-600">Privacy Policy</a>

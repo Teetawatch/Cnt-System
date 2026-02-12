@@ -65,137 +65,248 @@
             </div>
         </div>
 
-        <div class="glass-card animate-fade-in-up">
-            <!-- Filters -->
-            <div class="p-6 border-b border-slate-100 dark:border-slate-700/50">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div class="relative">
-                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                            <input type="text" 
-                                   wire:model.live.debounce.300ms="search" 
-                                   placeholder="ค้นหากิจกรรม..." 
-                                   class="pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 w-full sm:w-60 transition-all">
-                        </div>
+        <div class="glass-card animate-fade-in-up relative overflow-hidden">
+            <!-- Header with Title and Search (New!) -->
+            <div class="p-6 border-b border-slate-100 bg-slate-50/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
+                    <h3 class="font-bold text-slate-800">รายการงานทั้งหมด</h3>
+                </div>
+                <!-- Global Search -->
+                <div class="relative w-full md:w-80">
+                    <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" 
+                           wire:model.live.debounce.300ms="search" 
+                           placeholder="ค้นหาชื่อเรื่อง, สถานที่ หรือหน่วยงาน..." 
+                           class="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm">
+                </div>
+            </div>
 
+            <!-- Detailed Advanced Filters -->
+            <div class="p-6 border-b border-slate-100 bg-white">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] uppercase font-bold text-slate-400 ml-1 tracking-wider">กรองวันที่</label>
                         <input type="date" 
                                wire:model.live="filterDate" 
-                               class="bg-slate-50 border border-slate-200 rounded-xl text-sm py-2 px-3 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                               class="w-full bg-slate-50 border border-slate-200 rounded-xl text-sm py-2 px-3 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer">
+                    </div>
 
-                        <select wire:model.live="filterStaff" class="bg-slate-50 border border-slate-200 rounded-xl text-sm py-2 px-3 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer">
-                            <option value="">ผู้ปฏิบัติทั้งหมด</option>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] uppercase font-bold text-slate-400 ml-1 tracking-wider">เลือกผู้ปฏิบัติ</label>
+                        <select wire:model.live="filterStaff" class="w-full bg-slate-50 border border-slate-200 rounded-xl text-sm py-2 px-3 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all">
+                            <option value="">ผู้ปฏิบัติงานทั้งหมด</option>
                             @foreach($staffList as $staff)
                                 <option value="{{ $staff->id }}">{{ $staff->name }}</option>
                             @endforeach
                         </select>
+                    </div>
 
-                        <select wire:model.live="filterStatus" class="bg-slate-50 border border-slate-200 rounded-xl text-sm py-2 px-3 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer">
-                            <option value="">สถานะทั้งหมด</option>
-                            <option value="pending">รอยืนยัน</option>
-                            <option value="confirmed">ยืนยันแล้ว</option>
-                            <option value="cancelled">ยกเลิก</option>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] uppercase font-bold text-slate-400 ml-1 tracking-wider">สถานะกิจกรรม</label>
+                        <select wire:model.live="filterStatus" class="w-full bg-slate-50 border border-slate-200 rounded-xl text-sm py-2 px-3 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all">
+                            <option value="">ทุกสถานะ</option>
+                            <option value="pending">🟡 รอยืนยัน</option>
+                            <option value="confirmed">🟢 ยืนยันแล้ว</option>
+                            <option value="cancelled">🔴 ยกเลิก</option>
                         </select>
+                    </div>
 
+                    <div class="flex items-end gap-2">
                         @if($search || $filterDate || $filterStaff || $filterStatus)
-                            <button wire:click="clearFilters" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm transition-colors flex items-center gap-1">
-                                <i class="fa-solid fa-xmark"></i>
-                                ล้าง
+                            <button wire:click="clearFilters" class="w-full px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-100 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-rotate-left text-xs"></i>
+                                ล้างตัวกรอง
                             </button>
                         @endif
                     </div>
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full">
+            <!-- Desktop View: High-Detail Table -->
+            <div class="hidden lg:block">
+                <table class="w-full border-separate border-spacing-0">
                     <thead>
-                        <tr class="bg-slate-50/50 border-b border-slate-100 text-left">
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">วันที่/เวลา</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">รายการงาน</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">ผู้ปฏิบัติ</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">สถานที่</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">สถานะ</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">จัดการ</th>
+                        <tr class="bg-slate-50/50 text-left border-b border-slate-100">
+                            <th class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-widest border-b border-slate-100">วัน/เวลา</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-widest border-b border-slate-100">กิจกรรม/รายละเอียด</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-widest border-b border-slate-100">ผู้รับผิดชอบ</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-widest border-b border-slate-100">สถานที่</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-widest border-b border-slate-100 text-center">สถานะ</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-widest border-b border-slate-100 text-right">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($events as $event)
-                            <tr class="hover:bg-slate-50/80 transition-colors group" wire:key="event-{{ $event->id }}">
-                                <td class="px-6 py-4 whitespace-nowrap">
+                            <tr class="hover:bg-indigo-50/30 transition-all duration-300 group" wire:key="event-desktop-{{ $event->id }}">
+                                <td class="px-6 py-5 whitespace-nowrap align-top">
                                     <div class="flex flex-col">
-                                        <span class="font-bold text-slate-700 dark:text-white">{{ $event->event_date->format('d/m/Y') }}</span>
-                                        <span class="text-xs text-slate-500 bg-slate-100 rounded px-1.5 py-0.5 w-fit mt-1">
-                                            <i class="fa-regular fa-clock me-1"></i>{{ $event->time_range }}
-                                        </span>
+                                        <div class="text-base font-bold text-slate-700">{{ $event->event_date->format('d') }}</div>
+                                        <div class="text-[10px] uppercase font-bold text-indigo-500 tracking-tighter">{{ $event->event_date->translatedFormat('M Y') }}</div>
+                                        <div class="mt-2 inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-100 rounded-md px-1.5 py-0.5 w-fit">
+                                            <i class="fa-regular fa-clock"></i> {{ $event->time_range }}
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <div class="max-w-xs">
-                                        <p class="font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 transition-colors">{{ $event->title }}</p>
-                                        @if($event->organization)
-                                            <p class="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                                                <i class="fa-regular fa-building"></i> {{ $event->organization }}
+                                <td class="px-6 py-5 align-top">
+                                    <div class="flex flex-col gap-1.5">
+                                        <div class="flex flex-wrap items-baseline gap-x-4">
+                                            <p class="font-bold text-slate-800 text-base group-hover:text-indigo-600 transition-colors leading-snug">
+                                                {{ $event->title }}
+                                            </p>
+                                            @if($event->organization)
+                                                <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-wider bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100 flex items-center gap-1">
+                                                    <i class="fa-solid fa-building-circle-check"></i> {{ $event->organization }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        @if($event->description)
+                                            <p class="text-xs text-slate-400 max-w-2xl leading-relaxed italic">
+                                                <i class="fa-solid fa-quote-left text-[8px] opacity-30 me-1"></i>
+                                                {{ $event->description }}
                                             </p>
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200">
-                                            @if($event->staff->photo)
+                                <td class="px-6 py-5 whitespace-nowrap align-top">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm ring-1 ring-slate-100 transition-transform group-hover:scale-105">
+                                            @if($event->staff->photo_url)
                                                 <img src="{{ $event->staff->photo_url }}" alt="" class="w-full h-full object-cover">
                                             @else
-                                                <i class="fa-solid fa-user text-xs text-slate-400"></i>
+                                                <div class="w-full h-full bg-indigo-50 flex items-center justify-center text-indigo-300">
+                                                    <i class="fa-solid fa-user-tie"></i>
+                                                </div>
                                             @endif
                                         </div>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-white">{{ $event->staff->name }}</span>
+                                        <div class="flex flex-col">
+                                            <span class="text-sm font-bold text-slate-700">{{ $event->staff->name }}</span>
+                                            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Personnel</span>
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-gray-400">
-                                    <div class="flex items-center gap-1">
-                                        <i class="fa-solid fa-location-dot text-rose-400 text-xs"></i>
+                                <td class="px-6 py-5 whitespace-nowrap align-top">
+                                    <div class="flex items-center gap-1.5 text-sm font-medium text-slate-500">
+                                        <div class="w-6 h-6 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center text-[10px]">
+                                            <i class="fa-solid fa-location-dot"></i>
+                                        </div>
                                         {{ $event->location }}
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-center">
-                                    <span class="badge badge-{{ $event->status_color }} shadow-sm">
+                                <td class="px-6 py-5 whitespace-nowrap align-top text-center">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide shadow-sm
+                                        @if($event->status === 'confirmed') bg-emerald-100 text-emerald-700
+                                        @elseif($event->status === 'pending') bg-amber-100 text-amber-700
+                                        @else bg-rose-100 text-rose-700 @endif">
+                                        <span class="w-1.5 h-1.5 rounded-full me-1.5 
+                                            @if($event->status === 'confirmed') bg-emerald-500
+                                            @elseif($event->status === 'pending') bg-amber-500
+                                            @else bg-rose-500 @endif animate-pulse"></span>
                                         {{ $event->status_label }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right">
-                                    <div class="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                                        <button wire:click="openEditModal({{ $event->id }})" class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm hover:shadow-md" title="แก้ไข">
+                                <td class="px-6 py-5 whitespace-nowrap align-top text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button wire:click="openEditModal({{ $event->id }})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-indigo-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-sm active:scale-95" title="แก้ไข">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
-                                        <button wire:click="confirmDelete({{ $event->id }})" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all shadow-sm hover:shadow-md" title="ลบ">
+                                        <button wire:click="confirmDelete({{ $event->id }})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-rose-600 flex items-center justify-center hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all shadow-sm active:scale-95" title="ลบ">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-24 text-center">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                                            <i class="fa-solid fa-calendar-xmark text-3xl text-slate-300"></i>
-                                        </div>
-                                        <p class="text-lg font-medium text-slate-900 mb-1">ไม่พบข้อมูลกิจกรรม</p>
-                                        <p class="text-slate-500 mb-6">ลองเปลี่ยนเงื่อนไขการค้นหา หรือเพิ่มกิจกรรมใหม่</p>
-                                        <button wire:click="openCreateModal" class="btn-primary">
-                                            <i class="fa-solid fa-plus me-2"></i>
-                                            เพิ่มกิจกรรมแรก
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            <!-- Empty State handled below Table -->
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
+            <!-- Mobile & Tablet View: Card Layout -->
+            <div class="lg:hidden p-4 space-y-4">
+                @forelse($events as $event)
+                    <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm space-y-4" wire:key="event-mobile-{{ $event->id }}">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-indigo-50 text-indigo-600 w-12 h-12 rounded-2xl flex flex-col items-center justify-center border border-indigo-100">
+                                    <span class="text-lg font-bold leading-none">{{ $event->event_date->format('d') }}</span>
+                                    <span class="text-[8px] uppercase font-bold">{{ $event->event_date->translatedFormat('M') }}</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 leading-tight">{{ $event->title }}</h4>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-[10px] font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">
+                                            <i class="fa-regular fa-clock me-1"></i>{{ $event->time_range }}
+                                        </span>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider
+                                            @if($event->status === 'confirmed') text-emerald-500
+                                            @elseif($event->status === 'pending') text-amber-500
+                                            @else text-rose-500 @endif">
+                                            ● {{ $event->status_label }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 py-3 border-y border-slate-50">
+                            <div>
+                                <p class="text-[9px] uppercase font-bold text-slate-400 tracking-wider mb-1">ผู้ปฏิบัติงาน</p>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-white ring-1 ring-slate-100">
+                                        @if($event->staff->photo_url)
+                                            <img src="{{ $event->staff->photo_url }}" alt="" class="w-full h-full object-cover">
+                                        @else
+                                            <i class="fa-solid fa-user text-[10px] text-slate-300"></i>
+                                        @endif
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-600">{{ $event->staff->name }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-[9px] uppercase font-bold text-slate-400 tracking-wider mb-1">สถานที่</p>
+                                <div class="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                                    <i class="fa-solid fa-location-dot text-rose-400"></i>
+                                    {{ Str::limit($event->location, 20) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-2 pt-1">
+                            <button wire:click="openEditModal({{ $event->id }})" class="flex-1 py-2 bg-slate-50 border border-slate-100 rounded-xl text-indigo-600 font-bold text-xs hover:bg-indigo-50 transition-all">
+                                <i class="fa-solid fa-pen-to-square me-1"></i> แก้ไข
+                            </button>
+                            <button wire:click="confirmDelete({{ $event->id }})" class="w-10 py-2 bg-slate-50 border border-slate-100 rounded-xl text-rose-500 hover:bg-rose-50 transition-all">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <!-- Empty State handled below -->
+                @endforelse
+            </div>
+
+            <!-- Empty State -->
+            @if($events->isEmpty())
+                <div class="px-6 py-24 text-center bg-white rounded-b-2xl">
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6 border-4 border-white shadow-sm ring-1 ring-slate-100">
+                            <i class="fa-solid fa-calendar-xmark text-4xl text-slate-200"></i>
+                        </div>
+                        <p class="text-xl font-bold text-slate-800 mb-2">ไม่พบข้อมูลกิจกรรมที่คุณค้นหา</p>
+                        <p class="text-slate-500 mb-8 max-w-sm mx-auto">ลองเปลี่ยนเงื่อนไขการค้นหา หรือเพิ่มกิจกรรมใหม่เข้าสู่ระบบได้ทันที</p>
+                        <button wire:click="openCreateModal" class="px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 shadow-xl shadow-indigo-600/20 transition-all transform active:scale-95 flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i>
+                            สร้างกิจกรรมใหม่
+                        </button>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Pagination -->
             @if($events->hasPages())
-                <div class="p-6 border-t border-slate-100">
+                <div class="p-6 border-t border-slate-100 bg-slate-50/50">
                     {{ $events->links() }}
                 </div>
             @endif
