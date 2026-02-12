@@ -20,20 +20,24 @@
 
         <style>
             .mesh-bg {
-                background-color: #4f46e5;
+                background-color: #f8fafc; /* slate-50 */
                 background-image: 
-                    radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                    radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
-                    radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%), 
-                    radial-gradient(at 0% 100%, hsla(339,49%,30%,1) 0, transparent 50%), 
-                    radial-gradient(at 50% 100%, hsla(225,39%,30%,1) 0, transparent 50%), 
-                    radial-gradient(at 100% 100%, hsla(253,16%,7%,1) 0, transparent 50%);
+                    radial-gradient(at 0% 0%, hsla(220,100%,97%,1) 0, transparent 50%), 
+                    radial-gradient(at 50% 0%, hsla(240,100%,98%,1) 0, transparent 50%), 
+                    radial-gradient(at 100% 0%, hsla(260,100%,97%,1) 0, transparent 50%), 
+                    radial-gradient(at 0% 100%, hsla(210,100%,96%,1) 0, transparent 50%), 
+                    radial-gradient(at 50% 100%, hsla(230,100%,97%,1) 0, transparent 50%), 
+                    radial-gradient(at 100% 100%, hsla(250,100%,98%,1) 0, transparent 50%);
             }
 
             .glass-morphism {
-                background: rgba(255, 255, 255, 0.05);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                box-shadow: 
+                    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+                    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
             }
 
             @keyframes blob {
@@ -52,43 +56,23 @@
     <body class="font-sans text-gray-900 antialiased overflow-hidden">
         <div class="min-h-screen relative flex items-center justify-center p-4 mesh-bg">
             <!-- Animated Blobs -->
-            <div class="absolute top-0 -left-4 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-            <div class="absolute top-0 -right-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-            <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+            <div class="absolute top-0 -left-4 w-96 h-96 bg-indigo-200/40 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+            <div class="absolute top-0 -right-4 w-96 h-96 bg-purple-200/40 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+            <div class="absolute -bottom-12 left-20 w-96 h-96 bg-rose-200/40 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
 
             <div class="w-full max-w-6xl flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
                 <!-- Left Content: Branding items -->
-                <div class="flex-1 text-center lg:text-left text-white space-y-6">
-                    <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm tracking-wide text-xs font-semibold text-indigo-200 uppercase animate-fade-in">
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-                        </span>
-                        Enterprise Workflow Systems
-                    </div>
-                    
-                    <h1 class="text-4xl lg:text-6xl font-bold leading-tight group">
+                <div class="flex-1 text-center lg:text-left text-slate-800 space-y-6">
+                    <h1 class="text-4xl lg:text-6xl font-bold leading-tight group text-slate-900">
                         จัดตารางงาน <br/>
-                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-violet-300">ให้สมบูรณ์แบบ</span>
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">ให้สมบูรณ์แบบ</span>
                     </h1>
                     
-                    <p class="text-slate-400 text-lg max-w-md mx-auto lg:mx-0 font-light">
+                    <p class="text-slate-500 text-lg max-w-md mx-auto lg:mx-0 font-medium">
                         สัมผัสประสบการณ์การจัดการปฏิทินรูปแบบใหม่ <br class="hidden lg:block"/> 
                         รวดเร็ว แม่นยำ และทรงพลังในทุกคลิก
                     </p>
 
-                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-4">
-                        <div class="flex -space-x-3">
-                            @for($i=1; $i<=4; $i++)
-                                <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-400">
-                                    {{ chr(64 + $i) }}
-                                </div>
-                            @endfor
-                        </div>
-                        <div class="text-sm text-slate-500 font-medium">
-                            เข้าร่วมกับผู้ดูแลระบบกว่า <span class="text-indigo-400">100+</span> ท่าน
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Right Content: Login Form -->
