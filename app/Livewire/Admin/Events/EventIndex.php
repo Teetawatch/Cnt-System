@@ -26,6 +26,7 @@ class EventIndex extends Component
     public $eventId;
     public $staff_id = '';
     public $event_date = '';
+    public $end_date = '';
     public $start_time = '';
     public $end_time = '';
     public $title = '';
@@ -53,6 +54,7 @@ class EventIndex extends Component
         return [
             'staff_id' => 'required|exists:staff,id',
             'event_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:event_date',
             'start_time' => 'required',
             'end_time' => 'nullable',
             'title' => 'required|max:255',
@@ -66,8 +68,10 @@ class EventIndex extends Component
     protected $messages = [
         'staff_id.required' => 'กรุณาเลือกผู้ปฏิบัติงาน',
         'staff_id.exists' => 'ไม่พบผู้ปฏิบัติงานที่เลือก',
-        'event_date.required' => 'กรุณาระบุวันที่',
+        'event_date.required' => 'กรุณาระบุวันที่เริ่มต้น',
         'event_date.date' => 'รูปแบบวันที่ไม่ถูกต้อง',
+        'end_date.date' => 'รูปแบบวันที่ไม่ถูกต้อง',
+        'end_date.after_or_equal' => 'วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่มต้น',
         'start_time.required' => 'กรุณาระบุเวลาเริ่ม',
         'title.required' => 'กรุณากรอกรายการงาน',
         'title.max' => 'รายการงานต้องไม่เกิน 255 ตัวอักษร',
@@ -109,6 +113,7 @@ class EventIndex extends Component
         $this->resetForm();
         $this->editMode = false;
         $this->event_date = now()->format('Y-m-d');
+        $this->end_date = now()->format('Y-m-d');
         $this->showModal = true;
     }
 
@@ -121,6 +126,7 @@ class EventIndex extends Component
         $this->eventId = $event->id;
         $this->staff_id = $event->staff_id;
         $this->event_date = $event->event_date->format('Y-m-d');
+        $this->end_date = $event->event_date->format('Y-m-d');
         $this->start_time = $event->start_time ? \Carbon\Carbon::parse($event->start_time)->format('H:i') : '';
         $this->end_time = $event->end_time ? \Carbon\Carbon::parse($event->end_time)->format('H:i') : '';
         $this->title = $event->title;
@@ -136,26 +142,44 @@ class EventIndex extends Component
     {
         $this->validate();
 
-        $data = [
-            'staff_id' => $this->staff_id,
-            'event_date' => $this->event_date,
-            'start_time' => $this->start_time,
-            'end_time' => $this->end_time ?: null,
-            'title' => $this->title,
-            'description' => $this->description,
-            'location' => $this->location,
-            'organization' => $this->organization,
-            'status' => $this->status,
-        ];
-
         if ($this->editMode) {
+            $data = [
+                'staff_id' => $this->staff_id,
+                'event_date' => $this->event_date,
+                'start_time' => $this->start_time,
+                'end_time' => $this->end_time ?: null,
+                'title' => $this->title,
+                'description' => $this->description,
+                'location' => $this->location,
+                'organization' => $this->organization,
+                'status' => $this->status,
+            ];
             $event = CalendarEvent::findOrFail($this->eventId);
             $event->update($data);
             session()->flash('success', 'แก้ไขกิจกรรมสำเร็จ');
         } else {
-            $data['created_by'] = auth()->id();
-            CalendarEvent::create($data);
-            session()->flash('success', 'เพิ่มกิจกรรมสำเร็จ');
+            $startDate = \Carbon\Carbon::parse($this->event_date);
+            $endDate = $this->end_date ? \Carbon\Carbon::parse($this->end_date) : $startDate;
+            
+            $days = $startDate->diffInDays($endDate) + 1;
+            
+            for ($i = 0; $i < $days; $i++) {
+                $currentDate = $startDate->copy()->addDays($i);
+                CalendarEvent::create([
+                    'staff_id' => $this->staff_id,
+                    'event_date' => $currentDate->format('Y-m-d'),
+                    'start_time' => $this->start_time,
+                    'end_time' => $this->end_time ?: null,
+                    'title' => $this->title,
+                    'description' => $this->description,
+                    'location' => $this->location,
+                    'organization' => $this->organization,
+                    'status' => $this->status,
+                    'created_by' => auth()->id(),
+                ]);
+            }
+            
+            session()->flash('success', 'เพิ่มกิจกรรมสำเร็จ (' . $days . ' วัน)');
         }
 
         // Auto-filter to the saved event's date so user can see it immediately
@@ -198,7 +222,7 @@ class EventIndex extends Component
 
     private function resetForm()
     {
-        $this->reset(['eventId', 'staff_id', 'event_date', 'start_time', 'end_time', 'title', 'description', 'location', 'organization', 'status']);
+        $this->reset(['eventId', 'staff_id', 'event_date', 'end_date', 'start_time', 'end_time', 'title', 'description', 'location', 'organization', 'status']);
         $this->status = 'confirmed';
         $this->resetValidation();
     }

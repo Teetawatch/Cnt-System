@@ -153,10 +153,12 @@
                                         </p>
                                     @endif
                                     @if($event->description)
-                                        <p class="text-sm text-gray-500 mt-1">
-                                            <i class="fa-solid fa-align-left me-1"></i>
-                                            {{ $event->description }}
-                                        </p>
+                                        <div class="mt-2 p-2.5 px-3 bg-blue-50/50 dark:bg-blue-900/10 border-s-2 border-blue-400 rounded-e-lg">
+                                            <p class="text-[13px] text-gray-600 dark:text-gray-300 italic flex items-start gap-2">
+                                                <i class="fa-solid fa-align-left text-[10px] mt-1 text-blue-500"></i>
+                                                {{ $event->description }}
+                                            </p>
+                                        </div>
                                     @endif
                                 </div>
                                 <span class="badge badge-{{ $event->status_color }} h-fit">

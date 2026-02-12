@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin Only Routes
-Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->prefix('old-admin')->name('admin.')->group(function () {
     // Staff Management (Livewire)
     Route::get('/', StaffIndex::class)->name('dashboard');
     Route::get('/staff', StaffIndex::class)->name('staff.index');

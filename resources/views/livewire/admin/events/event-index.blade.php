@@ -272,28 +272,75 @@
 
                             <div class="h-px bg-slate-100 w-full"></div>
 
-                            <!-- Date & Time -->
-                            <div class="bg-amber-50/50 rounded-2xl p-5 border border-amber-100">
-                                <label class="block text-sm font-bold text-amber-800 mb-3 flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xs">
-                                        <i class="fa-solid fa-clock"></i>
+                            <!-- Date & Time Section -->
+                            <div class="bg-indigo-50/30 dark:bg-indigo-900/10 rounded-2xl p-6 border border-indigo-100 dark:border-indigo-800/50">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <div class="w-8 h-8 rounded-lg bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                                        <i class="fa-solid fa-calendar-day"></i>
                                     </div>
-                                    วันและเวลา
-                                </label>
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div>
-                                        <label class="block text-xs font-semibold text-slate-500 mb-1">วันที่ <span class="text-rose-500">*</span></label>
-                                        <input type="date" wire:model="event_date" class="w-full rounded-xl border-slate-200 focus:border-amber-500 focus:ring-amber-500/20 text-sm">
-                                        @error('event_date') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                    <h4 class="font-bold text-slate-800 dark:text-white">กำหนดวันและเวลา</h4>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Dates -->
+                                    <div class="space-y-4">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">วันที่เริ่มต้น <span class="text-rose-500">*</span></label>
+                                                <div class="relative">
+                                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                                        <i class="fa-solid fa-calendar-alt"></i>
+                                                    </span>
+                                                    <input type="date" wire:model.live="event_date" class="form-input-custom pl-10">
+                                                </div>
+                                                @error('event_date') <p class="text-rose-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
+                                            </div>
+                                            
+                                            @if(!$editMode)
+                                                <div>
+                                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">วันที่สิ้นสุด</label>
+                                                    <div class="relative">
+                                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                                            <i class="fa-solid fa-calendar-check"></i>
+                                                        </span>
+                                                        <input type="date" wire:model.live="end_date" class="form-input-custom pl-10" min="{{ $this->event_date }}">
+                                                    </div>
+                                                    @error('end_date') <p class="text-rose-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        @if(!$editMode && $this->event_date && $this->end_date && $this->event_date != $this->end_date)
+                                            <div class="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-100 rounded-lg text-amber-700 text-xs font-medium animate-pulse">
+                                                <i class="fa-solid fa-info-circle"></i>
+                                                จะมีการสร้างกิจกรรมทั้งหมด {{ \Carbon\Carbon::parse($this->event_date)->diffInDays(\Carbon\Carbon::parse($this->end_date)) + 1 }} รายการ (แยกตามวัน)
+                                            </div>
+                                        @endif
                                     </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-slate-500 mb-1">เวลาเริ่ม <span class="text-rose-500">*</span></label>
-                                        <input type="time" wire:model="start_time" class="w-full rounded-xl border-slate-200 focus:border-amber-500 focus:ring-amber-500/20 text-sm">
-                                        @error('start_time') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-slate-500 mb-1">เวลาสิ้นสุด</label>
-                                        <input type="time" wire:model="end_time" class="w-full rounded-xl border-slate-200 focus:border-amber-500 focus:ring-amber-500/20 text-sm">
+
+                                    <!-- Times -->
+                                    <div class="space-y-4">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">เวลาเริ่ม <span class="text-rose-500">*</span></label>
+                                                <div class="relative">
+                                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                    <input type="time" wire:model="start_time" class="form-input-custom pl-10">
+                                                </div>
+                                                @error('start_time') <p class="text-rose-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">เวลาสิ้นสุด</label>
+                                                <div class="relative">
+                                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                                        <i class="fa-solid fa-clock-rotate-left"></i>
+                                                    </span>
+                                                    <input type="time" wire:model="end_time" class="form-input-custom pl-10">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

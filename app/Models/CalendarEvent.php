@@ -20,6 +20,7 @@ class CalendarEvent extends Model
         'staff_id',
         'created_by',
         'event_date',
+        'end_date',
         'start_time',
         'end_time',
         'title',
@@ -36,6 +37,7 @@ class CalendarEvent extends Model
      */
     protected $casts = [
         'event_date' => 'date',
+        'end_date' => 'date',
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
     ];
@@ -77,7 +79,14 @@ class CalendarEvent extends Model
      */
     public function scopeDateRange($query, $startDate, $endDate)
     {
-        return $query->whereBetween('event_date', [$startDate, $endDate]);
+        return $query->where(function($q) use ($startDate, $endDate) {
+            $q->whereBetween('event_date', [$startDate, $endDate])
+              ->orWhereBetween('end_date', [$startDate, $endDate])
+              ->orWhere(function($sq) use ($startDate, $endDate) {
+                  $sq->where('event_date', '<=', $startDate)
+                     ->where('end_date', '>=', $endDate);
+              });
+        });
     }
 
     /**

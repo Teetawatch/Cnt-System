@@ -20,6 +20,7 @@ class Staff extends Model
         'name',
         'position',
         'department',
+        'description',
         'photo',
         'is_active',
         'sort_order',

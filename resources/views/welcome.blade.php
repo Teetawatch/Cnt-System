@@ -468,6 +468,12 @@
                                             {{ $staff->department }}
                                         </div>
                                     @endif
+
+                                    @if($staff->description)
+                                        <div class="mt-3 text-sm text-slate-500 font-light leading-relaxed">
+                                            {{ $staff->description }}
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

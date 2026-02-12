@@ -114,7 +114,7 @@ return [
     |
     */
 
-    'inject_assets' => true,
+    'inject_assets' => false,
 
     /*
     |---------------------------------------------------------------------------
@@ -207,7 +207,7 @@ return [
     |
     */
 
-    'update_endpoint' => str_contains(env('APP_URL', ''), '/workcnt') ? '/workcnt/livewire/update' : '/livewire/update',
+    'update_endpoint' => rtrim(parse_url(env('APP_URL', ''), PHP_URL_PATH) ?: '', '/') . '/livewire/update',
 
     /*
     |---------------------------------------------------------------------------

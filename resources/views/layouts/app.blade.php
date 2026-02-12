@@ -56,11 +56,13 @@
         </div>
 
         @php
-            $subfolder = '/workcnt'; // Change this if your subfolder changes
-            $assetUrl = config('app.url');
+            // Extract subfolder dynamically from APP_URL for Livewire update URI
+            $appUrl = config('app.url');
+            $parsedPath = parse_url($appUrl, PHP_URL_PATH);
+            $subfolder = $parsedPath ? rtrim($parsedPath, '/') : '';
         @endphp
 
-        <!-- Livewire Scripts (Manual configuration for subfolder support) -->
+        <!-- Livewire Scripts (Published static assets for subfolder support) -->
         <script>
             window.livewireScriptConfig = {
                 "csrf": "{{ csrf_token() }}",
@@ -69,7 +71,7 @@
                 "nonce": ""
             };
         </script>
-        <script src="{{ $assetUrl }}/livewire/livewire.js" 
+        <script src="{{ asset('vendor/livewire/livewire.min.js') }}" 
                 data-csrf="{{ csrf_token() }}" 
                 data-update-uri="{{ $subfolder }}/livewire/update" 
                 data-navigate-once="true"
