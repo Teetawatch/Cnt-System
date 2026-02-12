@@ -234,31 +234,7 @@
                         <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all"></i>
                     </a>
 
-                    @auth
-                        @if(Auth::user()->isAdmin())
-                            <a href="{{ route('filament.admin.resources.staff.index') }}" class="flex items-center gap-4 p-3 rounded-xl bg-white border border-slate-100 hover:border-emerald-200 hover:shadow-md hover:bg-emerald-50/50 transition-all duration-300 group">
-                                <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <i class="fa-solid fa-user-plus"></i>
-                                </div>
-                                <div class="flex-grow">
-                                    <p class="font-bold text-slate-700 group-hover:text-emerald-700">จัดการผู้ปฏิบัติ</p>
-                                    <p class="text-xs text-slate-500">เพิ่ม/แก้ไขข้อมูล</p>
-                                </div>
-                                <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all"></i>
-                            </a>
 
-                            <a href="{{ route('filament.admin.resources.calendar-events.index') }}" class="flex items-center gap-4 p-3 rounded-xl bg-white border border-slate-100 hover:border-amber-200 hover:shadow-md hover:bg-amber-50/50 transition-all duration-300 group">
-                                <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <i class="fa-solid fa-calendar-plus"></i>
-                                </div>
-                                <div class="flex-grow">
-                                    <p class="font-bold text-slate-700 group-hover:text-amber-700">จัดการกิจกรรม</p>
-                                    <p class="text-xs text-slate-500">เพิ่ม/แก้ไขกิจกรรม</p>
-                                </div>
-                                <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-amber-400 group-hover:translate-x-1 transition-all"></i>
-                            </a>
-                        @endif
-                    @endauth
 
                     <a href="{{ route('calendar.pdf', ['date' => now()->format('Y-m-d')]) }}" target="_blank" class="flex items-center gap-4 p-3 rounded-xl bg-white border border-slate-100 hover:border-rose-200 hover:shadow-md hover:bg-rose-50/50 transition-all duration-300 group">
                         <div class="w-10 h-10 bg-rose-100 text-rose-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">

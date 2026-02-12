@@ -29,6 +29,14 @@ Route::get('/calendar/pdf', [App\Http\Controllers\CalendarController::class, 'ex
 
 Route::middleware('auth')->group(function () {
     Route::get('/calendar', \App\Livewire\CalendarView::class)->name('calendar.index');
+    
+    // Admin Routes
+    Route::get('/admin', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+
+    Route::get('/admin/staff', \App\Livewire\Admin\Staff\StaffIndex::class)->name('staff.index');
+    Route::get('/admin/events', \App\Livewire\Admin\Events\EventIndex::class)->name('calendar.manage');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -36,6 +44,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+
+// Redirect /admin to /admin/dashboard
 
 
 require __DIR__.'/auth.php';

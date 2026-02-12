@@ -254,6 +254,6 @@ class EventIndex extends Component
         return view('livewire.admin.events.event-index', [
             'events' => $events,
             'staffList' => $staffList,
-        ])->layout('layouts.app');
+        ])->layout('layouts.admin');
     }
 }

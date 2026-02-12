@@ -228,10 +228,10 @@
                     </a>
 
                     @auth
-                        <a href="{{ url('/admin') }}"
+                        <a href="{{ route('dashboard') }}"
                             class="flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition-all duration-300 shadow-xl shadow-slate-900/20 shine-effect">
-                            <i class="fa-solid fa-gear text-amber-400"></i>
-                            <span class="hidden sm:inline">จัดการข้อมูล</span>
+                            <i class="fa-solid fa-gauge-high text-amber-400"></i>
+                            <span class="hidden sm:inline">แดชบอร์ด</span>
                         </a>
                     @else
                         <a href="{{ route('login') }}"
@@ -553,26 +553,32 @@
 
     </main>
 
-    <!-- Refined Footer -->
-    <footer class="bg-white border-t border-slate-200 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+    <!-- Footer -->
+    <footer class="w-full bg-white border-t border-slate-200 py-8 mt-auto z-10 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                
+                <!-- Left: Copyright -->
                 <div class="flex items-center gap-4">
-                    <img src="{{ asset('images/logo.png') }}" class="w-12 h-12 object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500" alt="Logo">
+                    <img src="{{ asset('images/logo.png') }}" class="w-10 h-10 object-contain opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all" alt="Logo">
                     <div class="text-center md:text-left">
-                        <p class="text-slate-900 font-bold">ระบบปฏิทินการปฏิบัติงานผู้บริหาร</p>
-                        <p class="text-slate-500 text-sm">© {{ date('Y') }} สงวนลิขสิทธิ์</p>
+                        <p class="text-sm font-bold text-slate-800">ระบบปฏิทินการปฏิบัติงานผู้บริหาร</p>
+                        <p class="text-xs text-slate-500">© {{ date('Y') }} All Rights Reserved.</p>
                     </div>
                 </div>
+
+                <!-- Right: Meta & Back to Top -->
                 <div class="flex items-center gap-6">
                     <div class="text-right hidden md:block">
-                        <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Last Update</p>
-                        <p class="text-sm text-slate-600 font-mono">{{ now()->format('d M Y H:i:s') }}</p>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Last Update</p>
+                        <p class="text-xs text-slate-600 font-mono">{{ now()->format('d M Y H:i') }}</p>
                     </div>
-                    <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors">
+                    
+                    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
                         <i class="fa-solid fa-arrow-up"></i>
-                    </a>
+                    </button>
                 </div>
+
             </div>
         </div>
     </footer>

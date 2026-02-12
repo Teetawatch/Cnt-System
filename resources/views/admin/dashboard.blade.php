@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
@@ -113,7 +113,7 @@
                     <i class="fa-solid fa-calendar-plus me-2 text-success-500"></i>
                     กิจกรรมล่าสุด
                 </h3>
-                <a href="{{ url('/admin/calendar-events') }}" class="btn-primary text-sm">
+                <a href="{{ route('calendar.manage') }}" class="btn-primary text-sm">
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
@@ -143,4 +143,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>

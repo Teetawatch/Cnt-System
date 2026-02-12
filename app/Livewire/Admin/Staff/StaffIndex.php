@@ -204,6 +204,6 @@ class StaffIndex extends Component
 
         return view('livewire.admin.staff.staff-index', [
             'staffList' => $staff,
-        ])->layout('layouts.app');
+        ])->layout('layouts.admin');
     }
 }

@@ -9,10 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
-
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -70,10 +67,5 @@ class User extends Authenticatable implements FilamentUser
     public function calendarEvents(): HasMany
     {
         return $this->hasMany(CalendarEvent::class, 'created_by');
-    }
-
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return $this->isAdmin();
     }
 }
