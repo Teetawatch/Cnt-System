@@ -10,8 +10,11 @@ class LineNotificationSetting extends Model
     use HasFactory;
 
     protected $fillable = [
-        'line_notify_token',
+        'channel_access_token',
         'is_enabled',
+        'send_mode',
+        'destination_id',
+        'destination_name',
         'schedule_enabled',
         'schedule_time',
         'message_template',
@@ -33,6 +36,7 @@ class LineNotificationSetting extends Model
         if (!$setting) {
             $setting = self::create([
                 'is_enabled' => false,
+                'send_mode' => 'broadcast',
                 'schedule_enabled' => false,
                 'schedule_time' => '07:00',
                 'message_template' => self::defaultTemplate(),

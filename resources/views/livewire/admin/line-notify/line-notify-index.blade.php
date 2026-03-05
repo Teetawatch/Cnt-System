@@ -9,7 +9,7 @@
                 </div>
                 แจ้งเตือนผ่าน LINE
             </h1>
-            <p class="text-slate-500 text-sm mt-1">ส่งตารางปฏิบัติงานผ่าน LINE Notify</p>
+            <p class="text-slate-500 text-sm mt-1">ส่งตารางปฏิบัติงานผ่าน LINE Messaging API</p>
         </div>
 
         <button wire:click="openSettings"
@@ -24,17 +24,23 @@
         {{-- Connection Status --}}
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
             <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">สถานะการเชื่อมต่อ</span>
-                <div class="w-8 h-8 rounded-lg {{ $settings->line_notify_token ? 'bg-emerald-50' : 'bg-slate-100' }} flex items-center justify-center">
-                    <i class="fa-solid {{ $settings->line_notify_token ? 'fa-link text-emerald-500' : 'fa-link-slash text-slate-400' }} text-sm"></i>
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">สถานะ Bot</span>
+                <div class="w-8 h-8 rounded-lg {{ $settings->channel_access_token ? 'bg-emerald-50' : 'bg-slate-100' }} flex items-center justify-center">
+                    <i class="fa-solid {{ $settings->channel_access_token ? 'fa-robot text-emerald-500' : 'fa-robot text-slate-400' }} text-sm"></i>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <div class="w-2.5 h-2.5 rounded-full {{ $settings->line_notify_token ? 'bg-emerald-400 animate-pulse' : 'bg-slate-300' }}"></div>
-                <span class="font-semibold text-sm {{ $settings->line_notify_token ? 'text-emerald-600' : 'text-slate-500' }}">
-                    {{ $settings->line_notify_token ? 'เชื่อมต่อแล้ว' : 'ยังไม่ได้เชื่อมต่อ' }}
+                <div class="w-2.5 h-2.5 rounded-full {{ $settings->channel_access_token ? 'bg-emerald-400 animate-pulse' : 'bg-slate-300' }}"></div>
+                <span class="font-semibold text-sm {{ $settings->channel_access_token ? 'text-emerald-600' : 'text-slate-500' }}">
+                    {{ $settings->channel_access_token ? 'เชื่อมต่อแล้ว' : 'ยังไม่ได้เชื่อมต่อ' }}
                 </span>
             </div>
+            @if($settings->channel_access_token)
+                <p class="text-xs text-slate-400 mt-2">
+                    <i class="fa-solid fa-{{ $settings->send_mode === 'broadcast' ? 'bullhorn' : 'paper-plane' }} mr-1"></i>
+                    โหมด: {{ $settings->send_mode === 'broadcast' ? 'Broadcast (ทุกคน)' : 'Push (' . ($settings->destination_name ?: 'กลุ่ม/บุคคล') . ')' }}
+                </p>
+            @endif
         </div>
 
         {{-- Notification Toggle --}}
@@ -128,6 +134,21 @@
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-slate-600">กิจกรรมในวันที่เลือก</span>
                             <span class="text-lg font-bold text-indigo-600">{{ $todayEvents->count() }} รายการ</span>
+                        </div>
+                    </div>
+
+                    {{-- Send Mode Info --}}
+                    <div class="bg-slate-50 rounded-xl p-4 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg {{ $send_mode === 'broadcast' ? 'bg-violet-100' : 'bg-blue-100' }} flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid {{ $send_mode === 'broadcast' ? 'fa-bullhorn text-violet-500' : 'fa-paper-plane text-blue-500' }} text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-700">
+                                {{ $send_mode === 'broadcast' ? 'Broadcast' : 'Push Message' }}
+                            </p>
+                            <p class="text-xs text-slate-500">
+                                {{ $send_mode === 'broadcast' ? 'ส่งถึงเพื่อนทุกคนของ Bot' : 'ส่งไปที่ ' . ($destination_name ?: $destination_id ?: 'ยังไม่ได้ตั้งค่า') }}
+                            </p>
                         </div>
                     </div>
 
@@ -363,7 +384,7 @@
             <div class="sticky top-0 z-10 bg-white border-b border-slate-100 px-6 py-4 rounded-t-2xl flex items-center justify-between">
                 <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-gear text-indigo-500"></i>
-                    ตั้งค่า LINE Notify
+                    ตั้งค่า LINE Messaging API
                 </h3>
                 <button wire:click="closeSettings"
                         class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-all">
@@ -372,20 +393,21 @@
             </div>
 
             <div class="p-6 space-y-6">
-                {{-- LINE Notify Token --}}
+                {{-- Channel Access Token --}}
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">
                         <i class="fa-solid fa-key text-amber-500 mr-1"></i>
-                        LINE Notify Token
+                        Channel Access Token
                     </label>
                     <p class="text-xs text-slate-500 mb-3">
-                        สร้าง Token ได้ที่ <a href="https://notify-bot.line.me/my/" target="_blank" class="text-indigo-600 hover:underline font-medium">notify-bot.line.me</a>
+                        สร้าง Bot และรับ Token ได้ที่
+                        <a href="https://developers.line.biz/console/" target="_blank" class="text-indigo-600 hover:underline font-medium">LINE Developers Console</a>
                     </p>
                     <div class="relative">
                         <input type="{{ $showTokenInput ? 'text' : 'password' }}"
-                               wire:model="line_notify_token"
-                               placeholder="กรอก LINE Notify Token"
-                               class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20 text-sm pr-24 shadow-sm">
+                               wire:model="channel_access_token"
+                               placeholder="กรอก Channel Access Token (Long-lived)"
+                               class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20 text-sm pr-28 shadow-sm">
                         <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                             <button wire:click="$toggle('showTokenInput')" type="button"
                                     class="px-2 py-1 text-slate-400 hover:text-slate-600 transition-colors">
@@ -395,7 +417,7 @@
                                     wire:loading.attr="disabled"
                                     wire:target="testToken"
                                     class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-semibold hover:bg-indigo-100 transition-colors">
-                                <span wire:loading.remove wire:target="testToken">ทดสอบ</span>
+                                <span wire:loading.remove wire:target="testToken">ตรวจสอบ</span>
                                 <span wire:loading wire:target="testToken">
                                     <i class="fa-solid fa-spinner animate-spin"></i>
                                 </span>
@@ -403,6 +425,81 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Send Mode --}}
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">
+                        <i class="fa-solid fa-route text-indigo-500 mr-1"></i>
+                        โหมดการส่ง
+                    </label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all
+                            {{ $send_mode === 'broadcast' ? 'border-violet-500 bg-violet-50' : 'border-slate-200 hover:border-slate-300' }}">
+                            <input type="radio" wire:model.live="send_mode" value="broadcast" class="sr-only">
+                            <div class="w-10 h-10 rounded-lg {{ $send_mode === 'broadcast' ? 'bg-violet-100' : 'bg-slate-100' }} flex items-center justify-center">
+                                <i class="fa-solid fa-bullhorn {{ $send_mode === 'broadcast' ? 'text-violet-600' : 'text-slate-400' }}"></i>
+                            </div>
+                            <span class="text-sm font-semibold {{ $send_mode === 'broadcast' ? 'text-violet-700' : 'text-slate-600' }}">Broadcast</span>
+                            <span class="text-[10px] text-slate-500 text-center leading-tight">ส่งถึงเพื่อนทุกคนของ Bot</span>
+                        </label>
+                        <label class="relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all
+                            {{ $send_mode === 'push' ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300' }}">
+                            <input type="radio" wire:model.live="send_mode" value="push" class="sr-only">
+                            <div class="w-10 h-10 rounded-lg {{ $send_mode === 'push' ? 'bg-blue-100' : 'bg-slate-100' }} flex items-center justify-center">
+                                <i class="fa-solid fa-paper-plane {{ $send_mode === 'push' ? 'text-blue-600' : 'text-slate-400' }}"></i>
+                            </div>
+                            <span class="text-sm font-semibold {{ $send_mode === 'push' ? 'text-blue-700' : 'text-slate-600' }}">Push</span>
+                            <span class="text-[10px] text-slate-500 text-center leading-tight">ส่งไปที่กลุ่มหรือบุคคลเฉพาะ</span>
+                        </label>
+                    </div>
+                </div>
+
+                {{-- Destination (Push mode only) --}}
+                @if($send_mode === 'push')
+                <div class="space-y-3 p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5">
+                            <i class="fa-solid fa-id-badge text-blue-500 mr-1"></i>
+                            User ID / Group ID
+                        </label>
+                        <p class="text-xs text-slate-500 mb-2">ID ของผู้ใช้หรือกลุ่มที่ต้องการส่ง (ดูได้จาก Webhook event)</p>
+                        <input type="text" wire:model="destination_id"
+                               placeholder="U1234... หรือ C1234..."
+                               class="w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 text-sm shadow-sm font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5">
+                            <i class="fa-solid fa-tag text-blue-500 mr-1"></i>
+                            ชื่อปลายทาง (ไม่บังคับ)
+                        </label>
+                        <input type="text" wire:model="destination_name"
+                               placeholder="เช่น กลุ่มพนักงาน, ห้องประชาสัมพันธ์"
+                               class="w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 text-sm shadow-sm">
+                    </div>
+                </div>
+                @endif
+
+                {{-- Test Message Button --}}
+                <div>
+                    <button wire:click="sendTestMessage" type="button"
+                            wire:loading.attr="disabled"
+                            wire:target="sendTestMessage"
+                            class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-semibold hover:bg-emerald-100 border border-emerald-200 transition-all">
+                        <span wire:loading.remove wire:target="sendTestMessage">
+                            <i class="fa-solid fa-vial mr-1"></i>
+                            ส่งข้อความทดสอบ
+                        </span>
+                        <span wire:loading wire:target="sendTestMessage" class="flex items-center gap-2">
+                            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            กำลังส่ง...
+                        </span>
+                    </button>
+                </div>
+
+                <hr class="border-slate-100">
 
                 {{-- Schedule Time --}}
                 <div>
@@ -437,16 +534,30 @@
                               class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20 text-sm font-mono shadow-sm resize-none"></textarea>
                 </div>
 
-                {{-- Cron Job Info --}}
-                <div class="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                    <p class="text-sm font-bold text-amber-800 mb-2">
+                {{-- Setup Guide --}}
+                <div class="bg-amber-50 rounded-xl p-4 border border-amber-100 space-y-3">
+                    <p class="text-sm font-bold text-amber-800">
                         <i class="fa-solid fa-circle-info mr-1"></i>
-                        การตั้งค่า Cron Job (สำหรับส่งอัตโนมัติ)
+                        วิธีตั้งค่า LINE Messaging API
                     </p>
-                    <p class="text-xs text-amber-700 mb-2">เพิ่มคำสั่งนี้ใน Cron Job ของ Server:</p>
-                    <code class="block bg-white rounded-lg p-3 text-xs text-slate-700 border border-amber-200 font-mono break-all">
-                        * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
-                    </code>
+                    <ol class="text-xs text-amber-700 space-y-1.5 list-decimal list-inside">
+                        <li>ไปที่ <a href="https://developers.line.biz/console/" target="_blank" class="underline font-medium">LINE Developers Console</a></li>
+                        <li>สร้าง Provider → สร้าง Messaging API Channel</li>
+                        <li>ที่แท็บ <strong>Messaging API</strong> → กด Issue ที่ <strong>Channel access token (long-lived)</strong></li>
+                        <li>นำ Token มาวางในช่องด้านบน</li>
+                        <li>เพิ่ม Bot เป็นเพื่อน หรือเชิญเข้ากลุ่มที่ต้องการส่ง</li>
+                        <li>สำหรับ Push Mode: ใช้ Webhook หรือ LINE OA Manager เพื่อดู Group ID</li>
+                    </ol>
+
+                    <div class="mt-3 pt-3 border-t border-amber-200">
+                        <p class="text-xs text-amber-700 font-semibold mb-1">
+                            <i class="fa-solid fa-terminal mr-1"></i>
+                            Cron Job (สำหรับส่งอัตโนมัติ):
+                        </p>
+                        <code class="block bg-white rounded-lg p-3 text-xs text-slate-700 border border-amber-200 font-mono break-all">
+                            * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+                        </code>
+                    </div>
                 </div>
             </div>
 

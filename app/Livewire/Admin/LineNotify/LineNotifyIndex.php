@@ -14,8 +14,11 @@ class LineNotifyIndex extends Component
     use WithPagination;
 
     // Settings
-    public $line_notify_token = '';
+    public $channel_access_token = '';
     public $is_enabled = false;
+    public $send_mode = 'broadcast';
+    public $destination_id = '';
+    public $destination_name = '';
     public $schedule_enabled = false;
     public $schedule_time = '07:00';
     public $message_template = '';
@@ -31,8 +34,11 @@ class LineNotifyIndex extends Component
     public function mount()
     {
         $settings = LineNotificationSetting::instance();
-        $this->line_notify_token = $settings->line_notify_token ?? '';
+        $this->channel_access_token = $settings->channel_access_token ?? '';
         $this->is_enabled = $settings->is_enabled;
+        $this->send_mode = $settings->send_mode ?? 'broadcast';
+        $this->destination_id = $settings->destination_id ?? '';
+        $this->destination_name = $settings->destination_name ?? '';
         $this->schedule_enabled = $settings->schedule_enabled;
         $this->schedule_time = $settings->schedule_time ? Carbon::parse($settings->schedule_time)->format('H:i') : '07:00';
         $this->message_template = $settings->message_template ?? LineNotificationSetting::defaultTemplate();
@@ -45,14 +51,20 @@ class LineNotifyIndex extends Component
     public function saveSettings()
     {
         $this->validate([
-            'line_notify_token' => 'nullable|string',
+            'channel_access_token' => 'nullable|string',
+            'send_mode' => 'required|in:broadcast,push',
+            'destination_id' => 'nullable|string',
+            'destination_name' => 'nullable|string|max:255',
             'schedule_time' => 'required',
         ]);
 
         $settings = LineNotificationSetting::instance();
         $settings->update([
-            'line_notify_token' => $this->line_notify_token ?: null,
+            'channel_access_token' => $this->channel_access_token ?: null,
             'is_enabled' => $this->is_enabled,
+            'send_mode' => $this->send_mode,
+            'destination_id' => $this->destination_id ?: null,
+            'destination_name' => $this->destination_name ?: null,
             'schedule_enabled' => $this->schedule_enabled,
             'schedule_time' => $this->schedule_time,
             'message_template' => $this->message_template ?: LineNotificationSetting::defaultTemplate(),
@@ -87,17 +99,40 @@ class LineNotifyIndex extends Component
     }
 
     /**
-     * Test the token
+     * Test the token (verify bot info)
      */
     public function testToken()
     {
-        if (empty($this->line_notify_token)) {
-            session()->flash('error', 'กรุณากรอก LINE Notify Token ก่อน');
+        if (empty($this->channel_access_token)) {
+            session()->flash('error', 'กรุณากรอก Channel Access Token ก่อน');
             return;
         }
 
         $service = new LineNotifyService();
-        $result = $service->testToken($this->line_notify_token);
+        $result = $service->testToken($this->channel_access_token);
+
+        if ($result['success']) {
+            session()->flash('success', $result['message']);
+        } else {
+            session()->flash('error', $result['message']);
+        }
+    }
+
+    /**
+     * Send a test message
+     */
+    public function sendTestMessage()
+    {
+        // Save current settings first
+        $settings = LineNotificationSetting::instance();
+        $settings->update([
+            'channel_access_token' => $this->channel_access_token ?: null,
+            'send_mode' => $this->send_mode,
+            'destination_id' => $this->destination_id ?: null,
+        ]);
+
+        $service = new LineNotifyService();
+        $result = $service->sendTestMessage($settings->fresh());
 
         if ($result['success']) {
             session()->flash('success', $result['message']);
