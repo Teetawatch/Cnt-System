@@ -98,6 +98,14 @@
                             <span class="text-sm {{ request()->routeIs('calendar.manage') ? 'font-bold' : 'font-medium' }}">{{ __('จัดการกิจกรรม') }}</span>
                         </a>
 
+                        <a href="{{ route('line-notify.index') }}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('line-notify.*') ? 'bg-emerald-50 text-emerald-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-emerald-600' }}">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('line-notify.*') ? 'bg-white shadow-sm' : 'bg-transparent' }}">
+                                <i class="fa-brands fa-line text-sm {{ request()->routeIs('line-notify.*') ? 'text-emerald-600' : '' }}"></i>
+                            </div>
+                            <span class="text-sm {{ request()->routeIs('line-notify.*') ? 'font-bold' : 'font-medium' }}">{{ __('แจ้งเตือน LINE') }}</span>
+                        </a>
+
                         <div class="px-4 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-[0.2em] mt-2">Personal</div>
 
                         <a href="{{ route('calendar.index') }}" 
@@ -175,6 +183,11 @@
                            class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 {{ request()->routeIs('calendar.manage') ? 'bg-indigo-50 text-indigo-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600' }}">
                             <i class="fa-solid fa-calendar-plus w-5 text-center"></i>
                             <span class="text-sm font-medium">{{ __('จัดการกิจกรรม') }}</span>
+                        </a>
+                        <a href="{{ route('line-notify.index') }}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 {{ request()->routeIs('line-notify.*') ? 'bg-emerald-50 text-emerald-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-emerald-600' }}">
+                            <i class="fa-brands fa-line w-5 text-center"></i>
+                            <span class="text-sm font-medium">{{ __('แจ้งเตือน LINE') }}</span>
                         </a>
                         
                         <div class="px-4 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-[0.2em] mt-2">Personal</div>

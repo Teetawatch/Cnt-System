@@ -12,7 +12,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // LINE Notify: Send daily notifications at the configured time
+        $schedule->command('line:send-notification')
+            ->dailyAt(
+                \App\Models\LineNotificationSetting::first()?->schedule_time 
+                    ? \Carbon\Carbon::parse(\App\Models\LineNotificationSetting::first()->schedule_time)->format('H:i') 
+                    : '07:00'
+            )
+            ->when(function () {
+                $settings = \App\Models\LineNotificationSetting::first();
+                return $settings && $settings->is_enabled && $settings->schedule_enabled;
+            });
     }
 
     /**

@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/calendar', \App\Livewire\CalendarView::class)->name('calendar.index');
         Route::get('/staff', \App\Livewire\Admin\Staff\StaffIndex::class)->name('staff.index');
         Route::get('/events', \App\Livewire\Admin\Events\EventIndex::class)->name('calendar.manage');
+        Route::get('/line-notify', \App\Livewire\Admin\LineNotify\LineNotifyIndex::class)->name('line-notify.index');
     });
 
     // Profile
