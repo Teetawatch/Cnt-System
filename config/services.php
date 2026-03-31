@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'fcm' => [
+        'project_id' => env('FCM_PROJECT_ID', 'workcnt-68512'),
+        'server_key' => env('FCM_SERVER_KEY'),
+        'service_account_path' => env('FCM_SERVICE_ACCOUNT_PATH'),
+    ],
+
 ];
