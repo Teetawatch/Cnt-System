@@ -18,9 +18,6 @@
         <!-- SweetAlert2 -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <!-- Livewire Styles -->
-        @livewireStyles
-
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -39,7 +36,7 @@
             }
         </style>
     </head>
-    <body class="font-sans antialiased text-slate-600 bg-slate-50 relative selection:bg-indigo-100 selection:text-indigo-900" x-data="{ sidebarOpen: false }">
+    <body class="font-sans antialiased text-slate-600 bg-slate-50 relative selection:bg-indigo-100 selection:text-indigo-900">
         
         <!-- Background Pattern -->
         <div class="fixed inset-0 z-[-1] h-full w-full bg-slate-50 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
@@ -140,26 +137,19 @@
             </aside>
 
             <!-- Mobile Sidebar Overlay -->
-            <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-40 lg:hidden bg-slate-900/50 backdrop-blur-sm" @click="sidebarOpen = false"></div>
+            <div id="mobile-sidebar-overlay" class="hidden fixed inset-0 z-40 lg:hidden bg-slate-900/50 backdrop-blur-sm" onclick="toggleMobileSidebar()"></div>
 
             <!-- Mobile Sidebar Content -->
-            <aside x-show="sidebarOpen" 
-                   x-transition:enter="transition ease-in-out duration-300 transform" 
-                   x-transition:enter-start="-translate-x-full" 
-                   x-transition:enter-end="translate-x-0" 
-                   x-transition:leave="transition ease-in-out duration-300 transform" 
-                   x-transition:leave-start="translate-x-0" 
-                   x-transition:leave-end="-translate-x-full" 
-                   class="fixed inset-y-0 left-0 w-72 glass-sidebar z-50 lg:hidden flex flex-col shadow-2xl">
+            <aside id="mobile-sidebar" class="hidden fixed inset-y-0 left-0 w-72 bg-white z-50 lg:hidden flex flex-col shadow-2xl transition-transform duration-300">
                 
-                <div class="h-20 flex items-center justify-between px-6 border-b border-white/5">
+                <div class="h-20 flex items-center justify-between px-6 border-b border-slate-100">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 bg-gradient-to-tr from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center text-white">
                             <i class="fa-solid fa-calendar-check text-sm"></i>
                         </div>
-                        <span class="font-bold text-lg text-white">Admin Panel</span>
+                        <span class="font-bold text-lg text-slate-800">Admin Panel</span>
                     </div>
-                    <button @click="sidebarOpen = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-slate-400 hover:text-white transition-colors">
+                    <button onclick="toggleMobileSidebar()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors">
                         <i class="fa-solid fa-xmark text-sm"></i>
                     </button>
                 </div>
@@ -200,13 +190,13 @@
                 </div>
 
                 <!-- Mobile Profile Info -->
-                <div class="p-6 border-t border-white/5">
+                <div class="p-6 border-t border-slate-100">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold shadow-lg">
                             {{ substr(Auth::user()->name, 0, 1) }}
                         </div>
                         <div class="flex-grow min-w-0">
-                            <p class="font-bold text-white text-sm truncate leading-none">{{ Auth::user()->name }}</p>
+                            <p class="font-bold text-slate-800 text-sm truncate leading-none">{{ Auth::user()->name }}</p>
                             <p class="text-[10px] text-slate-500 mt-1 uppercase font-bold tracking-tighter">Administrator</p>
                         </div>
                     </div>
@@ -217,7 +207,7 @@
             <div class="flex flex-col flex-1 lg:pl-72 w-full min-h-screen">
                 <!-- Mobile Topbar -->
                 <header class="fixed top-0 w-full lg:hidden bg-white/80 backdrop-blur-md border-b border-slate-200 z-30 px-4 h-16 flex items-center justify-between shadow-sm">
-                    <button @click="sidebarOpen = true" class="w-10 h-10 flex items-center justify-center rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors">
+                    <button onclick="toggleMobileSidebar()" class="w-10 h-10 flex items-center justify-center rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors">
                         <i class="fa-solid fa-bars text-lg"></i>
                     </button>
                     
@@ -267,20 +257,36 @@
             $subfolder = $parsedPath ? rtrim($parsedPath, '/') : '';
         @endphp
 
-        <!-- Scripts & Livewire Support -->
+        <!-- Vue / Axios globals -->
         <script>
-            window.livewireScriptConfig = {
-                "csrf": "{{ csrf_token() }}",
-                "uri": "{{ $subfolder }}/livewire/update",
-                "progressBar": true,
-                "nonce": ""
+            window._appBase = '{{ $subfolder }}';
+            window._routes = {
+                adminDashboard: '{{ route('admin.dashboard') }}',
+                staffIndex:     '{{ route('staff.index') }}',
+                calendarManage: '{{ route('calendar.manage') }}',
+                lineNotify:     '{{ route('line-notify.index') }}',
+                calendarIndex:  '{{ route('calendar.index') }}',
             };
+            // Set axios CSRF token from meta tag
+            document.addEventListener('DOMContentLoaded', function () {
+                const token = document.querySelector('meta[name="csrf-token"]');
+                if (token && window.axios) {
+                    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.getAttribute('content');
+                }
+            });
         </script>
-        <script src="{{ asset('vendor/livewire/livewire.min.js') }}" 
-                data-csrf="{{ csrf_token() }}" 
-                data-update-uri="{{ $subfolder }}/livewire/update" 
-                data-navigate-once="true"
-                onload="if(window.Livewire && !Livewire.started){ Livewire.start(); }">
+
+        <!-- Mobile Sidebar Toggle -->
+        <script>
+            function toggleMobileSidebar() {
+                var sidebar = document.getElementById('mobile-sidebar');
+                var overlay = document.getElementById('mobile-sidebar-overlay');
+                if (!sidebar || !overlay) return;
+                var isHidden = sidebar.classList.contains('hidden');
+                sidebar.classList.toggle('hidden', !isHidden);
+                overlay.classList.toggle('hidden', !isHidden);
+                document.body.classList.toggle('overflow-hidden', isHidden);
+            }
         </script>
 
         <script>

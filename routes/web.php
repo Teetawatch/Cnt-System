@@ -36,10 +36,22 @@ Route::middleware('auth')->group(function () {
             return redirect()->route('admin.dashboard');
         })->name('dashboard');
 
-        Route::get('/calendar', \App\Livewire\CalendarView::class)->name('calendar.index');
-        Route::get('/staff', \App\Livewire\Admin\Staff\StaffIndex::class)->name('staff.index');
-        Route::get('/events', \App\Livewire\Admin\Events\EventIndex::class)->name('calendar.manage');
-        Route::get('/line-notify', \App\Livewire\Admin\LineNotify\LineNotifyIndex::class)->name('line-notify.index');
+        Route::get('/calendar', function () {
+            return view('admin.calendar');
+        })->name('calendar.index');
+
+        Route::get('/staff', function () {
+            return view('admin.staff');
+        })->name('staff.index');
+
+        Route::get('/events', function () {
+            return view('admin.events');
+        })->name('calendar.manage');
+
+        Route::get('/line-notify', function () {
+            $settings = \App\Models\LineNotificationSetting::instance();
+            return view('admin.line-notify', compact('settings'));
+        })->name('line-notify.index');
     });
 
     // Profile
