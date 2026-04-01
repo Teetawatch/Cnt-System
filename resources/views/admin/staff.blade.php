@@ -11,7 +11,7 @@
                     </h2>
                     <p class="text-sm text-slate-500 font-medium">เพิ่ม แก้ไข ลบ ข้อมูลบุคลากรในหน่วยงาน</p>
                 </div>
-            </div>
+            </div>  
         </div>
     </x-slot>
 

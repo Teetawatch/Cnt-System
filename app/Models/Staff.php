@@ -5,8 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Storage;
-
 class Staff extends Model
 {
     use HasFactory;
@@ -43,12 +41,7 @@ class Staff extends Model
     public function getPhotoUrlAttribute(): ?string
     {
         if ($this->photo) {
-            // Handle old photos that don't have 'uploads/' prefix
-            $path = $this->photo;
-            if (!str_starts_with($path, 'uploads/')) {
-                $path = 'uploads/' . $path;
-            }
-            return asset($path);
+            return asset($this->photo);
         }
         return null;
     }

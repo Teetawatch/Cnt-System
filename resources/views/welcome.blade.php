@@ -186,6 +186,13 @@
         $thaiMonth = $selectedDate->locale('th')->translatedFormat('F');
         $thaiYear = $selectedDate->year + 543;
 
+        $alwaysShowNames = [
+            'นายนิรุตต์ เข็มเงิน',
+            'นายอนุพงษ์ คล้องการ',
+            'นายสมรศักดิ์ วันโนนาม',
+            'ว่าที่ร้อยตรี ธนโชติ หร่ายรา',
+        ];
+
         $staffQuery = \App\Models\Staff::active()->ordered()->with([
             'calendarEvents' => function ($query) use ($selectedDate) {
                 $query->forDate($selectedDate)->orderByTime();
@@ -196,7 +203,12 @@
             $staffQuery->where('id', $selectedStaffId);
         }
 
-        $staffList = $staffQuery->get();
+        $staffList = $staffQuery->get()->filter(function ($staff) use ($alwaysShowNames, $selectedDate) {
+            if (in_array($staff->name, $alwaysShowNames)) {
+                return true;
+            }
+            return $staff->calendarEvents->count() > 0;
+        })->values();
         $allStaff = \App\Models\Staff::active()->ordered()->get();
         $totalEvents = \App\Models\CalendarEvent::forDate($selectedDate)->count();
     @endphp

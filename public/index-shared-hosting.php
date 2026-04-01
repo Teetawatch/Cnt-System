@@ -2,9 +2,14 @@
 
 /**
  * Laravel - Shared Hosting Index File
- * 
- * Copy this file to public_html/workcnt/index.php on your shared hosting server.
- * Adjust the paths below to match your server structure.
+ *
+ * โครงสร้าง server:
+ *   /home/nassacth/domains/workcnt.nass.ac.th/           <- Laravel root
+ *   /home/nassacth/domains/workcnt.nass.ac.th/public_html/  <- document root (วางไฟล์นี้ที่นี่ชื่อ index.php)
+ *
+ * วิธีใช้:
+ *   1. copy ไฟล์นี้ไปวางที่ public_html/index.php
+ *   2. copy ทุกไฟล์จาก public/ (ยกเว้น index.php เดิม) ไปวางที่ public_html/
  */
 
 use Illuminate\Contracts\Http\Kernel;
@@ -14,27 +19,21 @@ define('LARAVEL_START', microtime(true));
 
 /*
 |--------------------------------------------------------------------------
-| Set Laravel App Base Path
+| Laravel App Base Path
 |--------------------------------------------------------------------------
-|
-| For shared hosting, the Laravel app folder is typically outside public_html.
-| Adjust this path to point to your Laravel installation directory.
-|
-| Common structures:
-| - /home/username/cnt-system           (app folder)
-| - /home/username/public_html/workcnt  (public folder - where this file lives)
-|
+| public_html/ อยู่ใน Laravel root โดยตรง ดังนั้น dirname(__DIR__) = Laravel root
 */
 
-// Adjust this path to match your server structure
-$laravelAppPath = dirname(__DIR__, 2) . '/cnt-system';
+$laravelAppPath = dirname(__DIR__);
 
-// Alternative paths to try if the above doesn't work
-if (!is_dir($laravelAppPath)) {
-    $laravelAppPath = dirname(__DIR__) . '/cnt-system';
-}
-if (!is_dir($laravelAppPath)) {
-    $laravelAppPath = '/home/' . get_current_user() . '/cnt-system';
+/*
+|--------------------------------------------------------------------------
+| Sanity check
+|--------------------------------------------------------------------------
+*/
+if (!is_dir($laravelAppPath . '/vendor')) {
+    http_response_code(500);
+    die('Laravel app path not found: ' . $laravelAppPath . ' — กรุณาตรวจสอบโครงสร้างไฟล์');
 }
 
 /*
@@ -43,7 +42,7 @@ if (!is_dir($laravelAppPath)) {
 |--------------------------------------------------------------------------
 */
 
-if (file_exists($maintenance = $laravelAppPath.'/storage/framework/maintenance.php')) {
+if (file_exists($maintenance = $laravelAppPath . '/storage/framework/maintenance.php')) {
     require $maintenance;
 }
 
@@ -53,7 +52,7 @@ if (file_exists($maintenance = $laravelAppPath.'/storage/framework/maintenance.p
 |--------------------------------------------------------------------------
 */
 
-require $laravelAppPath.'/vendor/autoload.php';
+require $laravelAppPath . '/vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -61,7 +60,7 @@ require $laravelAppPath.'/vendor/autoload.php';
 |--------------------------------------------------------------------------
 */
 
-$app = require_once $laravelAppPath.'/bootstrap/app.php';
+$app = require_once $laravelAppPath . '/bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
 

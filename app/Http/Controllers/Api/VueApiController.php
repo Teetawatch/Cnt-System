@@ -13,6 +13,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class VueApiController extends Controller
 {
@@ -177,6 +183,25 @@ class VueApiController extends Controller
         $staff->delete();
 
         return response()->json(['message' => 'ลบผู้ปฏิบัติงานสำเร็จ']);
+    }
+
+    public function staffReorder(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'orders' => 'required|array',
+            'orders.*.id' => 'required|integer|exists:staff,id',
+            'orders.*.sort_order' => 'required|integer|min:0',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        foreach ($request->input('orders') as $item) {
+            Staff::where('id', $item['id'])->update(['sort_order' => $item['sort_order']]);
+        }
+
+        return response()->json(['message' => 'บันทึกลำดับสำเร็จ']);
     }
 
     // ─────────────────────────────────────────────
@@ -576,6 +601,154 @@ class VueApiController extends Controller
             'events_count'      => $log->events_count,
             'sender_name'       => $log->sender ? $log->sender->name : 'ระบบ',
         ];
+    }
+
+    // ─────────────────────────────────────────────
+    // STAFF IMPORT / TEMPLATE
+    // ─────────────────────────────────────────────
+
+    public function staffTemplate()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('บุคลากร');
+
+        // Headers
+        $headers = ['ชื่อ-นามสกุล *', 'ตำแหน่ง *', 'หน่วยงาน', 'ลำดับการแสดงผล', 'สถานะ (1=ใช้งาน, 0=ปิด)'];
+        foreach ($headers as $col => $header) {
+            $cell = chr(65 + $col) . '1';
+            $sheet->setCellValue($cell, $header);
+        }
+
+        // Header style
+        $sheet->getStyle('A1:E1')->applyFromArray([
+            'font'      => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 12],
+            'fill'      => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '4F46E5']],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'CCCCCC']]],
+        ]);
+        $sheet->getRowDimension(1)->setRowHeight(28);
+
+        // Sample rows
+        $samples = [
+            ['นายสมชาย ใจดี', 'ผู้จัดการ', 'ฝ่ายบุคคล', 1, 1],
+            ['นางสาวสมหญิง รักงาน', 'เจ้าหน้าที่', 'ฝ่ายการเงิน', 2, 1],
+        ];
+        foreach ($samples as $row => $data) {
+            foreach ($data as $col => $value) {
+                $sheet->setCellValue(chr(65 + $col) . ($row + 2), $value);
+            }
+            $bgColor = $row % 2 === 0 ? 'F8F9FF' : 'FFFFFF';
+            $sheet->getStyle('A' . ($row + 2) . ':E' . ($row + 2))->applyFromArray([
+                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => $bgColor]],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'E2E8F0']]],
+            ]);
+        }
+
+        // Column widths
+        $widths = ['A' => 30, 'B' => 25, 'C' => 20, 'D' => 20, 'E' => 25];
+        foreach ($widths as $col => $width) {
+            $sheet->getColumnDimension($col)->setWidth($width);
+        }
+
+        // Add note sheet
+        $note = $spreadsheet->createSheet();
+        $note->setTitle('คำอธิบาย');
+        $note->setCellValue('A1', 'คำอธิบายฟิลด์');
+        $note->getStyle('A1')->getFont()->setBold(true)->setSize(13);
+        $noteRows = [
+            ['A', 'ชื่อ-นามสกุล', 'จำเป็น - ชื่อเต็มของผู้ปฏิบัติงาน'],
+            ['B', 'ตำแหน่ง', 'จำเป็น - ตำแหน่งงาน'],
+            ['C', 'หน่วยงาน', 'ไม่บังคับ - ชื่อหน่วยงานหรือฝ่าย'],
+            ['D', 'ลำดับการแสดงผล', 'ไม่บังคับ - ตัวเลข (ค่าเริ่มต้น = 0)'],
+            ['E', 'สถานะ', 'ไม่บังคับ - 1 = ใช้งาน, 0 = ปิดใช้งาน (ค่าเริ่มต้น = 1)'],
+        ];
+        foreach ($noteRows as $i => $row) {
+            $note->setCellValue('A' . ($i + 2), $row[0]);
+            $note->setCellValue('B' . ($i + 2), $row[1]);
+            $note->setCellValue('C' . ($i + 2), $row[2]);
+        }
+        $note->getColumnDimension('A')->setWidth(5);
+        $note->getColumnDimension('B')->setWidth(22);
+        $note->getColumnDimension('C')->setWidth(50);
+
+        $spreadsheet->setActiveSheetIndex(0);
+
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'staff_import_template.xlsx';
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Cache-Control' => 'max-age=0',
+        ]);
+    }
+
+    public function staffImport(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:xlsx,xls|max:5120',
+        ], [
+            'file.required' => 'กรุณาเลือกไฟล์ Excel',
+            'file.mimes'    => 'รองรับเฉพาะไฟล์ .xlsx และ .xls',
+            'file.max'      => 'ขนาดไฟล์ต้องไม่เกิน 5MB',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $spreadsheet = IOFactory::load($request->file('file')->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $rows  = $sheet->toArray(null, true, true, false);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => ['file' => ['ไม่สามารถอ่านไฟล์ได้ กรุณาตรวจสอบรูปแบบไฟล์']]], 422);
+        }
+
+        $imported = 0;
+        $skipped  = 0;
+        $rowErrors = [];
+
+        foreach ($rows as $index => $row) {
+            if ($index === 0) continue; // skip header
+
+            $name     = trim((string) ($row[0] ?? ''));
+            $position = trim((string) ($row[1] ?? ''));
+
+            if (empty($name) && empty($position)) continue; // skip blank rows
+
+            $lineErrors = [];
+            if (empty($name))     $lineErrors[] = 'ชื่อ-นามสกุล ห้ามว่าง';
+            if (empty($position)) $lineErrors[] = 'ตำแหน่ง ห้ามว่าง';
+
+            if (!empty($lineErrors)) {
+                $rowErrors[] = ['row' => $index + 1, 'errors' => $lineErrors];
+                $skipped++;
+                continue;
+            }
+
+            $sortOrder = isset($row[3]) && is_numeric($row[3]) ? (int) $row[3] : 0;
+            $isActive  = isset($row[4]) ? ((int) $row[4] === 1 || strtolower((string) $row[4]) === 'true') : true;
+
+            Staff::create([
+                'name'       => $name,
+                'position'   => $position,
+                'department' => trim((string) ($row[2] ?? '')) ?: null,
+                'sort_order' => $sortOrder,
+                'is_active'  => $isActive,
+            ]);
+
+            $imported++;
+        }
+
+        return response()->json([
+            'message'    => "นำเข้าสำเร็จ {$imported} รายการ" . ($skipped > 0 ? ", ข้ามไป {$skipped} รายการ" : ''),
+            'imported'   => $imported,
+            'skipped'    => $skipped,
+            'row_errors' => $rowErrors,
+        ]);
     }
 
     private function uploadPhoto($file): string

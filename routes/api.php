@@ -42,10 +42,13 @@ Route::middleware(['web', 'auth'])->prefix('vue')->group(function () {
     Route::get('/calendar/event/{id}',   [$vue, 'calendarEventDetail']);
 
     // Staff
-    Route::get('/staff',       [$vue, 'staffList']);
-    Route::post('/staff',      [$vue, 'staffStore']);
-    Route::post('/staff/{id}', [$vue, 'staffUpdate']);
-    Route::delete('/staff/{id}', [$vue, 'staffDestroy']);
+    Route::get('/staff/template',       [$vue, 'staffTemplate']);
+    Route::post('/staff/import',        [$vue, 'staffImport']);
+    Route::get('/staff',                [$vue, 'staffList']);
+    Route::post('/staff',               [$vue, 'staffStore']);
+    Route::post('/staff/reorder',       [$vue, 'staffReorder']);
+    Route::post('/staff/{id}',          [$vue, 'staffUpdate']);
+    Route::delete('/staff/{id}',        [$vue, 'staffDestroy']);
 
     // Events
     Route::get('/events',        [$vue, 'eventList']);

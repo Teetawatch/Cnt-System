@@ -1,6 +1,8 @@
 <?php
-require __DIR__.'/../vendor/autoload.php';
-$app = require_once __DIR__.'/../bootstrap/app.php';
+// ลบไฟล์นี้ทันทีหลังใช้งาน!
+// วางไฟล์นี้ที่ public_html/clear-cache.php แล้วเปิด browser
+require dirname(__DIR__) . '/vendor/autoload.php';
+$app = require_once dirname(__DIR__) . '/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 echo "<pre>";
 echo "Clearing caches...\n";
